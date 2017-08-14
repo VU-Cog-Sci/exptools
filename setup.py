@@ -8,6 +8,11 @@ README = open(os.path.join(here, 'README.rst')).read()
 version = '0.1'
 
 install_requires = [
+    'quest',
+    'numpy',
+    'pylink',
+    'psychopy',
+    'pygame',
     # List your project dependencies here.
     # For more details, see:
     # http://packages.python.org/distribute/setuptools.html#declaring-dependencies
