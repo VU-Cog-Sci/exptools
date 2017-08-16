@@ -48,7 +48,7 @@ class ExpToolsConfig(object):
         elif (section, option) in boolean_vars:
             return self._config.getboolean(section, option)
         else:
-            return self._config.get(section, option)
+            return int(self._config.get(section, option))
 
     def set(self, section, option, value):
         if isinstance(value, bool) or isinstance(value, list):
