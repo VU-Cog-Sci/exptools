@@ -1,3 +1,5 @@
+import numpy as np
+
 class Trial(object):
 	"""base class for Trials"""
 	def __init__(self, parameters = {}, phase_durations = [], session = None, screen = None, tracker = None):
