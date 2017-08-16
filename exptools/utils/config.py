@@ -13,6 +13,17 @@ import exptools
 import json
 
 
+list_vars = [('screen', 'physical_screen_size'),
+             ('screen', 'gamma_scale'),
+             ('screen', 'background_color'),
+             ('screen', 'size'),
+             ('screen', 'max_lums')]
+
+boolean_vars = [('screen', 'wait_blanking'),
+                ('screen', 'full_screen'),
+                ('screen', 'mouse_visible')]
+
+
 class ExpToolsConfig(object):
 
     def __init__(self):
@@ -30,10 +41,17 @@ class ExpToolsConfig(object):
             self._config.read(config_file)
 
     def get(self, section, option):
-        return json.loads(self._config.get(section, option))
+        print section, option
+        if (section, option) in list_vars:
+            print 'yo'
+            return json.loads(self._config.get(section, option))
+        elif (section, option) in boolean_vars:
+            return self._config.getboolean(section, option)
+        else:
+            return self._config.get(section, option)
 
     def set(self, section, option, value):
-        if isinstance(value, bool):
+        if isinstance(value, bool) or isinstance(value, list):
             value = str(value)
 
         return self._config.set(section, option, value)
