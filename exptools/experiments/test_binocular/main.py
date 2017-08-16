@@ -15,7 +15,7 @@ def main():
     run = 1
     appnope.nope()
 
-    ts = BinocularSession( initials, run )
+    ts = BinocularSession( initials, run)
     ts.run()
 
     # plot_mapper_staircase(initials, run_nr)
