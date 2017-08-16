@@ -1,7 +1,6 @@
 from psychopy.visual import DotStim
 from psychopy import logging, visual
 import numpy
-import os
 import json
 
 import numpy as np
@@ -33,25 +32,16 @@ class DotSlave(DotStim):
 
 class BinocularDotStimulus(object):
 
-    def __init__(self, screen, trial, session, color='r', coherence=0.5, config_file=None):#,task):
+    def __init__(self, screen, trial, session, config, color='r', coherence=0.5):#,task):
 
         assert(color in ['r', 'b'])
 
-        if config_file is None:
-            config_file = os.path.join(exptools.__path__[0], 'experiments',
-                                  'test_binocular', 'default_settings.json')
-
-        with open(config_file) as config_file:
-            config = json.load(config_file)
 
         if color == 'r':
             color = [config['red_intensity'], -1, -1]
         if color == 'b':
             color = [-1, -1, config['blue_intensity']]
 
-
-
-        logging.debug('Loaded settings from %s:\n%s' % (config_file, config))
 
         self.screen = screen
         self.trial = trial
