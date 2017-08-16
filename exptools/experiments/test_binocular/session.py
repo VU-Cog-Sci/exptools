@@ -10,5 +10,4 @@ class BinocularSession(Session):
     def run(self):
         """docstring for fname"""
         # cycle through trials
-        print "YO"
         self.close()

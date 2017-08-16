@@ -14,6 +14,9 @@ from psychopy import visual, core, event, misc
 import pygame
 #from pygame.locals import *
 from scipy.io import wavfile
+import datetime
+import os
+import pickle as pkl
 
 import pyaudio, wave
 import numpy as np
@@ -37,6 +40,8 @@ class Session(object):
         self.outputDict = {'parameterArray': [], 'eventArray' : []}
         self.events = []
         self.stopped = False
+
+        self.create_output_filename()
     
     def create_screen(self, **kwargs):
 
@@ -72,7 +77,7 @@ class Session(object):
 
         self.screen.flip()
     
-    def create_output_file_name(self, data_directory = 'data'):
+    def create_output_filename(self, data_directory = 'data'):
         """create output file"""
         now = datetime.datetime.now()
         opfn = now.strftime("%Y-%m-%d_%H.%M.%S")
@@ -88,9 +93,9 @@ class Session(object):
         we assume the input data consists of two arrays - one for parameters and one for timings. 
         the two arrays' rows will be trials.
         """
-        self.input_file_name = self.index_number + '.pickle'
+        self.input_file_name = self.index_number + '.pkl'
         ipf = open(self.input_file_name)
-        self.input_data = pickle.load(ipf)
+        self.input_data = pkl.load(ipf)
         ipf.close()
     
     def create_input_data(self, save = False):
@@ -110,8 +115,8 @@ class Session(object):
         """close screen and save data"""
         pygame.mixer.quit()
         self.screen.close()
-        parsopf = open(self.output_file + '_outputDict.pickle', 'a')
-        pickle.dump(self.outputDict,parsopf)
+        parsopf = open(self.output_file + '_outputDict.pkl', 'a')
+        pkl.dump(self.outputDict,parsopf)
         parsopf.close()
     
     def play_sound(self, sound_index = '0'):
