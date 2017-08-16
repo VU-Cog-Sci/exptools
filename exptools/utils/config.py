@@ -41,9 +41,7 @@ class ExpToolsConfig(object):
             self._config.read(config_file)
 
     def get(self, section, option):
-        print section, option
         if (section, option) in list_vars:
-            print 'yo'
             return json.loads(self._config.get(section, option))
         elif (section, option) in boolean_vars:
             return self._config.getboolean(section, option)
