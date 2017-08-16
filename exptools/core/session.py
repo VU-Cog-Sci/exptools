@@ -10,7 +10,7 @@ Created by Tomas HJ Knapen on 2009-11-26.
 Copyright (c) 2009 TK. All rights reserved.
 """
 
-from psychopy import visual, core, event, misc
+from psychopy import visual, core, event, misc, logging
 import pygame
 #from pygame.locals import *
 from scipy.io import wavfile
@@ -40,10 +40,11 @@ class Session(object):
         self.outputDict = {'parameterArray': [], 'eventArray' : []}
         self.events = []
         self.stopped = False
+        self.logging = logging
 
         self.create_output_filename()
     
-    def create_screen(self, **kwargs):
+    def create_screen(self, engine='pygaze', **kwargs):
 
          #Set arguments from config file or kwargs
         for argument in ['size', 'full_screen', 'background_color', 'gamma_scale',
@@ -54,14 +55,31 @@ class Session(object):
 
 
         # the actual screen-getting
-        self.display = libscreen.Display(disptype='psychopy', 
-                                         dispsize=self.size, 
-                                         fgc=(255,0,0), 
-                                         bgc=list((255*bgl for bgl in self.background_color)), 
-                                         screennr=self.screen_nr,
-                                         mousevisible=self.mouse_visible)
+        print self.full_screen
 
-        self.screen = pygaze.expdisplay
+
+        if engine == 'pygaze':
+            self.display = libscreen.Display(disptype='psychopy', 
+                                             dispsize=self.size, 
+                                             fgc=(255,0,0), 
+                                             bgc=list((255*bgl for bgl in self.background_color)), 
+                                             screennr=self.screen_nr,
+                                             mousevisible=self.mouse_visible,
+                                             fullscr=self.full_screen,
+                                             blendMode='add')
+                
+            self.screen = pygaze.expdisplay
+        elif engine == 'psychopy':   
+            self.screen = visual.Window(size=self.size, 
+                                        fullscr=self.full_screen, 
+                                        screen=self.screen_nr,
+                                        allowGUI=True, 
+                                        units='pix', 
+                                        allowStencil=True, 
+                                        rgb=self.background_color, 
+                                        waitBlanking=self.wait_blanking, 
+                                        winType='pyglet')
+
         self.screen.setMouseVisible(self.mouse_visible)
         self.screen.setColor(self.background_color)
         
@@ -159,6 +177,11 @@ class Session(object):
                         stream_callback=callback)
 
         stream.start_stream()
+
+    def deg2pix(self, deg):
+
+        return deg * self.pixels_per_degree
+            
     
 
 class EyelinkSession(Session):
