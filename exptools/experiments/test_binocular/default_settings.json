@@ -1,7 +1,13 @@
 {
-	"dotsize": 10,
-	"height_barsquare":7,
-	"width_barsquare":7,
+	"n_dots":25,
+	"coherence":0.5,
+	"dotsize_deg": 0.5,
+	"fieldsize_deg": 5,
+	"speed": 0.1,
+	"height_barsquare":14,
+	"width_barsquare":14,
 	"square_size_deg":0.5,
+	"red_intensity":0.8,
+	"blue_intensity":0.8,
 	"thickness_bars":2
 }
