@@ -62,8 +62,7 @@ class Session(object):
                                              bgc=list((255*bgl for bgl in self.background_color)), 
                                              screennr=self.screen_nr,
                                              mousevisible=self.mouse_visible,
-                                             fullscr=self.full_screen,
-                                             blendMode='add')
+                                             fullscr=self.full_screen,)
                 
             self.screen = pygaze.expdisplay
         elif engine == 'psychopy':   
@@ -75,6 +74,7 @@ class Session(object):
                                         allowStencil=True, 
                                         rgb=self.background_color, 
                                         waitBlanking=self.wait_blanking, 
+                                        useFBO=True,
                                         winType='pyglet')
 
         self.screen.setMouseVisible(self.mouse_visible)
