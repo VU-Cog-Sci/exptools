@@ -1,5 +1,5 @@
 from exptools.core.trial import Trial
-from stim import BinocularDotStimulus
+from stim import BinocularDotStimulus, RandomBarFrameStimulus
 import os
 import exptools
 import json
@@ -39,13 +39,21 @@ class BinocularDotsTrial(Trial):
                                                color='white', 
                                                sf=0)
 
+        self.randombarstimulus = RandomBarFrameStimulus(screen=self.screen,
+                                                        trial=self,
+                                                        config=config,
+                                                        session=self.session)
+
+
     def draw(self, *args, **kwargs):
 
         if self.phase == 0:
             self.fixation.draw()
+            self.randombarstimulus.draw()
         elif self.phase == 1:    
             self.dot_stimulus.draw()
             self.fixation.draw()
+            self.randombarstimulus.draw()
 
         super(BinocularDotsTrial, self).draw()
 

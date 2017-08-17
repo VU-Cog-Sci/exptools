@@ -29,19 +29,9 @@ class DotSlave(DotStim):
         self._verticesBase = self.master._verticesBase
         logging.debug('New _verticesBase: %s' % self._verticesBase)
 
+class RandomBarFrameStimulus(object):
 
-class BinocularDotStimulus(object):
-
-    def __init__(self, screen, trial, session, config, color='r', coherence=0.5):#,task):
-
-        assert(color in ['r', 'b'])
-
-
-        if color == 'r':
-            color = [config['red_intensity'], -1, -1]
-        if color == 'b':
-            color = [-1, -1, config['blue_intensity']]
-
+    def __init__(self, screen, trial, session, config):
 
         self.screen = screen
         self.trial = trial
@@ -89,6 +79,31 @@ class BinocularDotStimulus(object):
 
         self.bars = [bar1, bar2, bar3, bar4]
 
+    def draw(self):
+
+        for bar in self.bars:
+            bar.draw()
+
+
+
+
+
+class BinocularDotStimulus(object):
+
+    def __init__(self, screen, trial, session, config, color='r', coherence=0.5):#,task):
+
+        assert(color in ['r', 'b'])
+
+
+        if color == 'r':
+            color = [config['red_intensity'], -1, -1]
+        if color == 'b':
+            color = [-1, -1, config['blue_intensity']]
+
+
+        self.screen = screen
+        self.trial = trial
+        self.session = session
 
         # Set up the Random dot motion
         dotsize_pix = self.session.deg2pix(config['dotsize_deg'])
@@ -107,13 +122,10 @@ class BinocularDotStimulus(object):
                                fieldSize=fieldsize_pix,
                                coherence=config['coherence'],
                                speed=config['speed'],
-                               dotLife=1e6,
+                               #dotLife=1e6,
                                fieldShape='circle')
 
 
     def draw(self):
-
-        for bar in self.bars:
-            bar.draw()
 
         self.dots.draw()
