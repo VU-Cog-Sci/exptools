@@ -1,18 +1,21 @@
-from exptools.core import Session
+from exptools.core import Session, MRISession
 from trial import BinocularDotsTrial
 from psychopy import clock
 import os
 import exptools
 import json
 
-class BinocularSession(Session):
+from psychopy import logging
+logging.console.setLevel(logging.INFO)
+
+class BinocularSession(MRISession):
 
 
     def __init__(self, *args, **kwargs):
 
         super(BinocularSession, self).__init__(*args, **kwargs)
 
-        self.create_screen(full_screen=False, engine='psychopy')
+        self.create_screen(full_screen=True, engine='psychopy')
 
         config_file = os.path.join(exptools.__path__[0], 'experiments',
                               'test_binocular', 'default_settings.json')
@@ -23,9 +26,8 @@ class BinocularSession(Session):
         self.parameters = config
         self.stopped = False
 
-        self.n_trs = 0
-        self.simulate_scanner = True
-
+        self.tr = config['tr']
+        self.simulate_mri_trigger = config['simulate_mri_trigger']
 
 
     def run(self):
@@ -42,7 +44,7 @@ class BinocularSession(Session):
                                        screen=self.screen, 
                                        session=self, 
                                        color=color)
-            print "running %s" % trial_idx
+            logging.info('Running trial %d' % trial_idx)
             trial.run()
             trial_idx += 1
 
