@@ -8,25 +8,24 @@ import numpy as np
 
 class BinocularDotsTrial(Trial):
 
-    def __init__(self, trial_idx, config, color='r', *args, **kwargs):
+    def __init__(self, trial_idx, parameters, color='r', *args, **kwargs):
             
+        phase_durations = [parameters['fixation_time'], parameters['stimulus_time']]
+
+        super(BinocularDotsTrial, self).__init__(parameters=parameters,
+                                                 phase_durations=phase_durations,
+                                                 *args, 
+                                                 **kwargs)
         self.ID = trial_idx
         self.color = color
 
-        phase_durations = [config['fixation_time'], config['stimulus_time']]
-
-        super(BinocularDotsTrial, self).__init__(phase_durations=phase_durations,
-                                                 *args, 
-                                                 **kwargs)
-
-
         self.dot_stimulus = BinocularDotStimulus(screen=self.screen,
                                              trial=self,
-                                             config=config,
-                                             color=self.color,
-                                             session=self.session)
+                                             session=self.session,
+                                             config=self.parameters,
+                                             color=self.color,)
 
-        size_fixation_pix = self.session.deg2pix(config['size_fixation_deg'])
+        size_fixation_pix = self.session.deg2pix(self.parameters['size_fixation_deg'])
 
         self.fixation = visual.GratingStim(self.screen, 
                                                tex='sin', 
@@ -38,7 +37,7 @@ class BinocularDotsTrial(Trial):
 
         self.randombarstimulus = RandomBarFrameStimulus(screen=self.screen,
                                                         trial=self,
-                                                        config=config,
+                                                        config=self.parameters,
                                                         session=self.session)
 
 
@@ -83,16 +82,15 @@ class BinocularDotsTrial(Trial):
         super(BinocularDotsTrial, self).stop()
         
         if self.color == 'r':
-            self.session.binocular_config['red_intensity'] = self.dot_stimulus.element_master.color[0]
+            self.session.parameters['red_intensity'] = self.dot_stimulus.element_master.color[0]
         elif self.color == 'b':
-            self.session.binocular_config['blue_intensity'] = self.dot_stimulus.element_master.color[2]
-
-        print self.color, self.session.binocular_config
+            self.session.parameters['blue_intensity'] = self.dot_stimulus.element_master.color[2]
 
 
     def event(self):
 
         for ev in event.getKeys():
+
             if len(ev) > 0:
                 if ev in ['esc', 'escape', 'q']:
                     self.events.append([-99,self.session.clock.getTime()-self.start_time])

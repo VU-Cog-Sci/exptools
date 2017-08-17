@@ -95,7 +95,6 @@ class BinocularDotStimulus(object):
 
         assert(color in ['r', 'b'])
 
-
         if color == 'r':
             color = [config['red_intensity'], -1, -1]
         if color == 'b':

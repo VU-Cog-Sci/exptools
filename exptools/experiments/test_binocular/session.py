@@ -20,9 +20,11 @@ class BinocularSession(Session):
         with open(config_file) as config_file:
             config = json.load(config_file)
         
-        self.binocular_config = config
-
+        self.parameters = config
         self.stopped = False
+
+        self.n_trs = 0
+        self.simulate_scanner = True
 
 
 
@@ -36,7 +38,7 @@ class BinocularSession(Session):
 
             color = ['r', 'b'][trial_idx % 2]
             trial = BinocularDotsTrial(trial_idx, 
-                                       config=self.binocular_config,
+                                       parameters=self.parameters.copy(),
                                        screen=self.screen, 
                                        session=self, 
                                        color=color)
