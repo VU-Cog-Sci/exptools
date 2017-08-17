@@ -1,4 +1,4 @@
-from exptools.core.trial import Trial
+from exptools.core.trial import MRITrial
 from stim import BinocularDotStimulus, RandomBarFrameStimulus
 import os
 import exptools
@@ -6,7 +6,7 @@ import json
 from psychopy import logging, visual, event
 import numpy as np
 
-class BinocularDotsTrial(Trial):
+class BinocularDotsTrial(MRITrial):
 
     def __init__(self, trial_idx, parameters, color='r', *args, **kwargs):
             
@@ -109,5 +109,4 @@ class BinocularDotsTrial(Trial):
                     else: 
                         self.dot_stimulus.element_master.color -= delta
 
-
-            super(BinocularDotsTrial, self).key_event( ev )
+            super(BinocularDotsTrial, self).key_event(ev)
