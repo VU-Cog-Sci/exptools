@@ -23,6 +23,7 @@ boolean_vars = [('screen', 'wait_blanking'),
                 ('screen', 'full_screen'),
                 ('screen', 'mouse_visible')]
 
+str_vars = [('mri', 'mri_trigger_key'),]
 
 class ExpToolsConfig(object):
 
@@ -45,6 +46,8 @@ class ExpToolsConfig(object):
             return json.loads(self._config.get(section, option))
         elif (section, option) in boolean_vars:
             return self._config.getboolean(section, option)
+        elif (section, option) in str_vars:
+            return self._config.get(section, option)
         else:
             return int(self._config.get(section, option))
 
