@@ -201,8 +201,13 @@ class MRISession(Session):
         self.current_tr = 0
 
 
-    def mri_trigger(self):
-        self.time_of_last_tr = self.clock.getTime()
+    def mri_trigger(self, time=None):
+
+        if time is None:
+            self.time_of_last_tr = self.clock.getTime()
+        else:
+            self.time_of_last_tr = time
+
         self.current_tr += 1
 
 class EyelinkSession(Session):
