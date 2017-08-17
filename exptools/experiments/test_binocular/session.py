@@ -6,7 +6,7 @@ import exptools
 import json
 
 from psychopy import logging
-logging.console.setLevel(logging.INFO)
+logging.console.setLevel(logging.CRITICAL)
 
 class BinocularSession(MRISession):
 

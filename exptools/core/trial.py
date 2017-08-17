@@ -84,23 +84,21 @@ class MRITrial(Trial):
 
     def __init__(self, *args, **kwargs):
         super(MRITrial, self).__init__(*args, **kwargs)
-
-    def event(self):
-        if self.session.simulate_mri_trigger:
-            current_time = self.session.clock.getTime()
-            if current_time - self.session.time_of_last_tr > self.session.tr:
-                aimed_time = self.session.time_of_last_tr + self.session.tr
-                self.key_event(self.session.mri_trigger_key)
-                logging.info('Simulated trigger at %s' % current_time)
-
-        super(MRITrial, self).event()
     
     def draw(self):
         super(MRITrial, self).draw()
 
-    def key_event(self, event, time=None):
+    def key_event(self, key):
+        if key == self.session.mri_trigger_key:
+            self.session.mri_trigger()
 
-        if event == self.session.mri_trigger_key:
-            self.session.mri_trigger(time)
+        super(MRITrial, self).key_event(key)
 
-        super(MRITrial, self).key_event(event)
+    def event(self):
+        if self.session.simulate_mri_trigger:
+            current_time = self.session.clock.getTime()
+            if current_time - self.session.target_trigger_time > 0:
+                self.key_event(key=self.session.mri_trigger_key)
+                logging.critical('Simulated trigger at %s' % current_time)
+
+        super(MRITrial, self).event()

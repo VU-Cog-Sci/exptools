@@ -43,6 +43,8 @@ class Session(object):
         self.logging = logging
 
         self.create_output_filename()
+
+        self.start_time = self.clock.getTime()
     
     def create_screen(self, engine='pygaze', **kwargs):
 
@@ -200,18 +202,17 @@ class MRISession(Session):
         self.mri_trigger_key = mri_trigger_key    
         self.time_of_last_tr = self.clock.getTime()
 
+
         self.tr = tr
         self.current_tr = 0
+        self.target_trigger_time = self.start_time + self.tr
 
-
-    def mri_trigger(self, time=None):
-
-        if time is None:
-            self.time_of_last_tr = self.clock.getTime()
-        else:
-            self.time_of_last_tr = time
-
+    def mri_trigger(self):
+        self.time_of_last_tr = self.clock.getTime()
         self.current_tr += 1
+        self.target_trigger_time = self.start_time + (self.current_tr + 1) * self.tr
+
+        logging.critical('Registered MRI trigger')
 
 class EyelinkSession(Session):
     """docstring for EyelinkSession"""
