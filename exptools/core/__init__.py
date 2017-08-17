@@ -1,3 +1,3 @@
 from . import session
-from session import Session
-from trial import Trial
+from session import Session, MRISession
+from trial import Trial, MRITrial

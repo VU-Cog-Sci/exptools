@@ -3,8 +3,6 @@ from .session import MRISession
 
 class Trial(object):
     def __init__(self, parameters = {}, phase_durations = [], session = None, screen = None, tracker = None):
-        if type(session) is MRISession:
-            self.__class__ = MRITrial
 
         self.parameters = parameters.copy()
         self.phase_durations = phase_durations
