@@ -6,6 +6,30 @@ import json
 from psychopy import logging, visual, event
 import numpy as np
 
+class WaitTrial(MRITrial):
+
+    def __init__(self, *args, **kwargs):
+        super(WaitTrial, self).__init__(*args, **kwargs)
+        self.ID = 'wait'
+
+        self.text = visual.TextStim(self.screen, "Waiting for trigger", color='white', height=70)
+
+    def draw(self):
+        self.text.draw()
+        super(WaitTrial, self).draw()
+
+    def key_event(self, key):
+        super(WaitTrial, self).key_event(key)
+
+        if key == self.session.mri_trigger_key:
+            self.stop()
+
+        if key != self.session.mri_trigger_key:
+            self.stop()
+            self.session.stop()
+
+
+
 class BinocularDotsTrial(MRITrial):
 
     def __init__(self, trial_idx, parameters, color='r', *args, **kwargs):
@@ -55,7 +79,8 @@ class BinocularDotsTrial(MRITrial):
 
 
     def run(self):
-        super(BinocularDotsTrial, self).run()
+
+        self.start_time = self.session.clock.getTime()
         
         while not self.stopped:
             
@@ -87,26 +112,25 @@ class BinocularDotsTrial(MRITrial):
             self.session.parameters['blue_intensity'] = self.dot_stimulus.element_master.color[2]
 
 
-    def event(self):
 
-        for ev in event.getKeys():
+    def key_event(self, key):
 
-            if len(ev) > 0:
-                if ev in ['esc', 'escape', 'q']:
-                    self.events.append([-99,self.session.clock.getTime()-self.start_time])
-                    self.stopped = True
-                    self.session.stopped = True
-                    self.session.logging.info('run canceled by user')
-                if ev in ['a', 's']:
+        if key in ['esc', 'escape', 'q']:
+            self.events.append([-99,self.session.clock.getTime()-self.start_time])
+            self.stopped = True
+            self.session.stopped = True
+            self.session.logging.info('run canceled by user')
 
-                    if self.color == 'r':
-                        delta = np.array([0.025, 0, 0])
-                    elif self.color == 'b':
-                        delta = np.array([0, 0, 0.025])
-                    
-                    if ev == 'a':
-                        self.dot_stimulus.element_master.color += delta
-                    else: 
-                        self.dot_stimulus.element_master.color -= delta
+        if key in ['a', 's']:
 
-            super(BinocularDotsTrial, self).key_event(ev)
+            if self.color == 'r':
+                delta = np.array([0.025, 0, 0])
+            elif self.color == 'b':
+                delta = np.array([0, 0, 0.025])
+            
+            if key == 'a':
+                self.dot_stimulus.element_master.color += delta
+            else: 
+                self.dot_stimulus.element_master.color -= delta
+
+        super(BinocularDotsTrial, self).key_event(key)

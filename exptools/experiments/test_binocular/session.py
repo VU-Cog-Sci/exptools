@@ -1,5 +1,5 @@
 from exptools.core import Session, MRISession
-from trial import BinocularDotsTrial
+from trial import BinocularDotsTrial, WaitTrial
 from psychopy import clock
 import os
 import exptools
@@ -38,9 +38,16 @@ class BinocularSession(MRISession):
 
         trial_idx = 0
 
+        wait_trial = WaitTrial(session=self)
+        wait_trial.run()
+
         while not self.stopped:
 
-            color = ['r', 'b'][trial_idx % 2]
+            if (self.current_tr / 4) % 2 == 0:
+                color = 'r'
+            else:
+                color = 'b'
+            #color = ['r', 'b'][trial_idx % 2]
             trial = BinocularDotsTrial(trial_idx, 
                                        parameters=self.parameters.copy(),
                                        screen=self.screen, 

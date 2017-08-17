@@ -91,6 +91,9 @@ class Session(object):
         self.pixels_per_centimeter = self.pixels_per_degree / self.centimeters_per_degree
 
         self.screen.flip()
+
+    def stop(self):
+        self.stopped = True
     
     def create_output_filename(self, data_directory = 'data'):
         """create output file"""

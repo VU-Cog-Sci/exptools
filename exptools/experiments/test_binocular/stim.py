@@ -88,7 +88,7 @@ class RandomBarFrameStimulus(object):
 
 class BinocularDotStimulus(object):
 
-    def __init__(self, screen, trial, session, config, color='r', coherence=0.5):#,task):
+    def __init__(self, screen, trial, session, config, color='r'):#,task):
 
         assert(color in ['r', 'b'])
 
@@ -126,5 +126,4 @@ class BinocularDotStimulus(object):
 
 
     def draw(self):
-
         self.dots.draw()

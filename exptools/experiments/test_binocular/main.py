@@ -15,7 +15,7 @@ def main():
     run = 1
     appnope.nope()
 
-    ts = BinocularSession( initials, run, tr=1.0, simulate_mri_trigger=False)
+    ts = BinocularSession( initials, run, tr=2.0, simulate_mri_trigger=True)
     ts.run()
 
     # plot_mapper_staircase(initials, run_nr)

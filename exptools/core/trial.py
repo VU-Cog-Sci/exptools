@@ -1,6 +1,6 @@
 import numpy as np
 from .session import MRISession
-from psychopy import logging
+from psychopy import logging, event
 
 class Trial(object):
     def __init__(self, parameters = {}, phase_durations = [], session = None, screen = None, tracker = None):
@@ -30,6 +30,10 @@ class Trial(object):
             self.tracker.log('trial ' + str(self.ID) + ' started at ' + str(self.start_time) )
             self.tracker.send_command('record_status_message "Trial ' + str(self.ID) + '"')
         self.events.append('trial ' + str(self.ID) + ' started at ' + str(self.start_time))
+
+        while not self.stopped:
+            self.draw()
+            self.event()
         
         
     def stop(self):
@@ -44,10 +48,10 @@ class Trial(object):
         self.session.outputDict['eventArray'].append(self.events)
         self.session.outputDict['parameterArray'].append(self.parameters)
         
-    def key_event(self, event):
+    def key_event(self, key):
         if self.tracker:
-            self.tracker.log('trial ' + str(self.ID) + ' event ' + str(event) + ' at ' + str(self.session.clock.getTime()) )
-        self.events.append('trial ' + str(self.ID) + ' event ' + str(event) + ' at ' + str(self.session.clock.getTime()))
+            self.tracker.log('trial ' + str(self.ID) + ' event ' + str(key) + ' at ' + str(self.session.clock.getTime()) )
+        self.events.append('trial ' + str(self.ID) + ' event ' + str(key) + ' at ' + str(self.session.clock.getTime()))
 
     
     def feedback(self, answer, setting):
@@ -70,26 +74,33 @@ class Trial(object):
         if self.tracker:
             self.tracker.log('trial ' + str(self.ID) + ' phase ' + str(self.phase) + ' started at ' + phase_time )
             time_module.sleep(0.0005)
+
+    def event(self):
+        for ev in event.getKeys():
+            self.key_event(ev)
         
 class MRITrial(Trial):
 
 
     def __init__(self, *args, **kwargs):
         super(MRITrial, self).__init__(*args, **kwargs)
-    
-    def draw(self):
+
+    def event(self):
         if self.session.simulate_mri_trigger:
             current_time = self.session.clock.getTime()
             if current_time - self.session.time_of_last_tr > self.session.tr:
-                self.session.mri_trigger(self.session.time_of_last_tr + self.session.tr)
+                aimed_time = self.session.time_of_last_tr + self.session.tr
+                self.key_event(self.session.mri_trigger_key)
                 logging.info('Simulated trigger at %s' % current_time)
 
+        super(MRITrial, self).event()
+    
+    def draw(self):
         super(MRITrial, self).draw()
 
-    def key_event(self, event):
-        super(MRITrial, self).key_event(event)
-
+    def key_event(self, event, time=None):
 
         if event == self.session.mri_trigger_key:
-            self.session.mri_trigger()
+            self.session.mri_trigger(time)
 
+        super(MRITrial, self).key_event(event)

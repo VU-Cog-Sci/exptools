@@ -15,6 +15,10 @@
 	"fixation_time":0.5,
 	"stimulus_time":1.0,
 	"barframe_seed":1986,
+
 	"tr":2.0,
-	"simulate_mri_trigger":true
+	"simulate_mri_trigger":true,
+
+	"block_length":12.0,
+	"rest_length":6.0
 }
