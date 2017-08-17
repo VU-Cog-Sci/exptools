@@ -13,9 +13,6 @@ class BinocularDotsTrial(Trial):
         self.ID = trial_idx
         self.color = color
 
-
-        print "YOOOO %s" % color
-
         phase_durations = [config['fixation_time'], config['stimulus_time']]
 
         super(BinocularDotsTrial, self).__init__(phase_durations=phase_durations,
