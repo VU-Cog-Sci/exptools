@@ -45,6 +45,7 @@ class RandomBarFrameStimulus(object):
         height_vbar_squares = int(self.session.deg2pix(config['height_barsquare'])  / square_size_pix - 2 * config['thickness_bars'])
         width_vbar_squares = int(config['thickness_bars'])
 
+        np.random.seed(config['barframe_seed'])
 
         # **** Set up bars ***
         bar_matrix1 = (np.random.random((height_hbar_squares, width_hbar_squares)) > 0.5) * 2 - 1

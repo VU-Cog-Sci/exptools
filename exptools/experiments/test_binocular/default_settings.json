@@ -12,5 +12,6 @@
 	"thickness_bars":3,
 	"size_fixation_deg":1,
 	"fixation_time":0.5,
-	"stimulus_time":1.0
+	"stimulus_time":1.0,
+	"barframe_seed":1986
 }
