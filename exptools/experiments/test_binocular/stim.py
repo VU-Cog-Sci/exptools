@@ -123,7 +123,7 @@ class BinocularDotStimulus(object):
                                fieldSize=fieldsize_pix,
                                coherence=config['coherence'],
                                speed=config['speed'],
-                               #dotLife=1e6,
+                               dotLife=config['dot_life'],
                                fieldShape='circle')
 
 
