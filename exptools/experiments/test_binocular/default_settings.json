@@ -2,7 +2,7 @@
 	"n_dots":100,
 	"coherence":0.1,
 	"dotsize_deg": 0.2,
-	"fieldsize_deg": 8,
+	"fieldsize_deg": 12,
 	"speed": 0.1,
 	"height_barsquare":15,
 	"width_barsquare":15,
@@ -10,7 +10,7 @@
 	"red_intensity":0.8,
 	"blue_intensity":0.8,
 	"thickness_bars":3,
-	"size_fixation_deg":1,
+	"size_fixation_deg":0.25,
 	"fixation_time":0.5,
 	"stimulus_time":1.0,
 	"barframe_seed":1986
