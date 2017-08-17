@@ -101,7 +101,7 @@ class BinocularDotsTrial(Trial):
                     self.events.append([-99,self.session.clock.getTime()-self.start_time])
                     self.stopped = True
                     self.session.stopped = True
-                    print 'run canceled by user'
+                    self.session.logging.info('run canceled by user')
                 if ev in ['a', 's']:
 
                     if self.color == 'r':
