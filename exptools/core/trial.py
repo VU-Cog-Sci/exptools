@@ -1,5 +1,6 @@
 import numpy as np
 from .session import MRISession
+from psychopy import logging
 
 class Trial(object):
     def __init__(self, parameters = {}, phase_durations = [], session = None, screen = None, tracker = None):
@@ -77,14 +78,17 @@ class MRITrial(Trial):
         super(MRITrial, self).__init__(*args, **kwargs)
     
     def draw(self):
-        super(MRITrial, self).draw()
         if self.session.simulate_mri_trigger:
             current_time = self.session.clock.getTime()
             if current_time - self.session.time_of_last_tr > self.session.tr:
-                self.session.mri_trigger()
+                self.session.mri_trigger(self.session.time_of_last_tr + self.session.tr)
+                logging.info('Simulated trigger at %s' % current_time)
+
+        super(MRITrial, self).draw()
 
     def key_event(self, event):
-        super(MRITrial, self).key_event(key)
+        super(MRITrial, self).key_event(event)
+
 
         if event == self.session.mri_trigger_key:
             self.session.mri_trigger()
