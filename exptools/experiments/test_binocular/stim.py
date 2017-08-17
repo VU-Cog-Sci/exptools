@@ -86,9 +86,6 @@ class RandomBarFrameStimulus(object):
             bar.draw()
 
 
-
-
-
 class BinocularDotStimulus(object):
 
     def __init__(self, screen, trial, session, config, color='r', coherence=0.5):#,task):
@@ -111,9 +108,11 @@ class BinocularDotStimulus(object):
 
         self.element_master = visual.GratingStim(win=self.screen,
                                             tex='sin', 
+                                            colorSpace='rgb',
                                             size=dotsize_pix, 
                                             sf=0, 
                                             mask='circle', 
+                                            name='element master',
                                             color=color,)
 
         self.dots = visual.DotStim(win=self.screen,
