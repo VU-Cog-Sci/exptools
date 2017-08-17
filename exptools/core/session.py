@@ -55,9 +55,6 @@ class Session(object):
 
 
         # the actual screen-getting
-        print self.full_screen
-
-
         if engine == 'pygaze':
             self.display = libscreen.Display(disptype='psychopy', 
                                              dispsize=self.size, 
@@ -182,7 +179,31 @@ class Session(object):
 
         return deg * self.pixels_per_degree
             
-    
+class MRISession(Session):
+
+    def __init__(self, 
+                 subject_initials,
+                 index_number,
+                 tr=2, 
+                 simulate_mri_trigger=True, 
+                 mri_trigger_key=config.get('mri', 'mri_trigger_key'), 
+                 *args, 
+                 **kwargs):
+
+
+        super(MRISession, self).__init__(subject_initials, index_number, *args, **kwargs)
+
+        self.simulate_mri_trigger = simulate_mri_trigger
+        self.mri_trigger_key = mri_trigger_key    
+        self.time_of_last_tr = self.clock.getTime()
+
+        self.tr = tr
+        self.current_tr = 0
+
+
+    def mri_trigger(self):
+        self.time_of_last_tr = self.clock.getTime()
+        self.current_tr += 1
 
 class EyelinkSession(Session):
     """docstring for EyelinkSession"""
@@ -474,4 +495,23 @@ class SoundSession(Session):
             stream_data = stream_data[::2]
 
         self.sounds.update({sound_name: stream_data})
+
+def test_MRISession_simulation():
+    from .trial import Trial
+
+    session = MRISession('GdH', 1)
+    session.create_screen()
+
+    trial = Trial(session=session)
+    trial.draw()
+
+    core.wait(2)
+    trial.draw()
+
+    logging.console.setLevel(logging.DEBUG)
+    logging.info('Current TR: %s\n\rTime last TR: %s' % (session.current_tr, session.time_of_last_tr, ))
+    assert(session.current_tr > 0) 
+
+
+
 
