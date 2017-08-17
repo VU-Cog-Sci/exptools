@@ -26,8 +26,10 @@ class BinocularSession(MRISession):
         self.parameters = config
         self.stopped = False
 
-        self.tr = config['tr']
-        self.simulate_mri_trigger = config['simulate_mri_trigger']
+        if 'tr' not in kwargs:
+            self.tr = config['tr']
+        if 'simulate_mri_trigger' not in kwargs:
+            self.simulate_mri_trigger = config['simulate_mri_trigger']
 
 
     def run(self):
