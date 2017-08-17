@@ -1,10 +1,10 @@
 {
-	"n_dots":100,
-	"coherence":0.1,
+	"n_dots":75,
+	"coherence":1.0,
 	"dotsize_deg": 0.2,
 	"fieldsize_deg": 12,
 	"speed": 0.5,
-	"dot_life":2,
+	"dot_life":3,
 	"height_barsquare":15,
 	"width_barsquare":15,
 	"square_size_deg":0.75,
@@ -19,6 +19,6 @@
 	"tr":2.0,
 	"simulate_mri_trigger":true,
 
-	"block_length":12.0,
+	"block_length":6.0,
 	"rest_length":6.0
 }

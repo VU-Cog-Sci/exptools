@@ -4,8 +4,10 @@ from psychopy import clock
 import os
 import exptools
 import json
+from exptools.core.staircase import ThreeUpOneDownStaircase 
 
 from psychopy import logging
+import numpy as np
 logging.console.setLevel(logging.CRITICAL)
 
 class BinocularSession(MRISession):
@@ -17,6 +19,7 @@ class BinocularSession(MRISession):
 
         self.create_screen(full_screen=True, engine='psychopy')
 
+        # Set up parameters
         config_file = os.path.join(exptools.__path__[0], 'experiments',
                               'test_binocular', 'default_settings.json')
 
@@ -31,6 +34,8 @@ class BinocularSession(MRISession):
         if 'simulate_mri_trigger' not in kwargs:
             self.simulate_mri_trigger = config['simulate_mri_trigger']
 
+        self.staircase = ThreeUpOneDownStaircase(0.5, 0.01, increment_value=0.01)
+
 
     def run(self):
         """docstring for fname"""
@@ -41,13 +46,21 @@ class BinocularSession(MRISession):
         wait_trial = WaitTrial(session=self)
         wait_trial.run()
 
-        while not self.stopped:
+        block_length = self.parameters['block_length']
+        rest_length = self.parameters['rest_length']
+        total_length = block_length + rest_length
 
-            if (self.current_tr / 4) % 2 == 0:
-                color = 'r'
-            else:
-                color = 'b'
-            #color = ['r', 'b'][trial_idx % 2]
+        while not self.stopped:
+            color_idx = int(((self.current_tr-1) * self.tr)  / total_length) % 2
+            color = ['r', 'b'][color_idx]
+
+            show_dots = ((self.current_tr-1) * self.tr)  % total_length < block_length
+            self.parameters['draw_dots'] = show_dots
+
+            # Randomly sample direction
+            direction = np.random.choice([180, 0])
+            self.parameters['direction'] = direction
+
             trial = BinocularDotsTrial(trial_idx, 
                                        parameters=self.parameters.copy(),
                                        screen=self.screen, 

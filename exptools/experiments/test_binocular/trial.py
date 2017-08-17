@@ -28,7 +28,54 @@ class WaitTrial(MRITrial):
             self.stop()
             self.session.stop()
 
+#class FixationTrial(MRITrial):
 
+    #def __init__(self, trial_idx, parameters, duration, *args, **kwargs):
+        #print parameters
+
+        #super(FixationTrial, self).__init__(parameters, phase_durations=[duration], *args, **kwargs)
+
+        #size_fixation_pix = self.session.deg2pix(self.parameters['size_fixation_deg'])
+
+        #self.fixation = visual.GratingStim(self.screen, 
+                                               #tex='sin', 
+                                               #mask='circle', 
+                                               #size=size_fixation_pix, 
+                                               #texRes=512, 
+                                               #color='white', 
+                                               #sf=0)
+
+        #self.randombarstimulus = RandomBarFrameStimulus(screen=self.screen,
+                                                        #trial=self,
+                                                        #config=self.parameters,
+                                                        #session=self.session)
+
+
+    #def draw(self, *args, **kwargs):
+
+        #self.fixation.draw()
+        #self.randombarstimulus.draw()
+
+        #super(FixationTrial, self).draw()
+
+    #def run(self):
+
+        #self.start_time = self.session.clock.getTime()
+        
+        #while not self.stopped:
+            
+             #events and draw
+            #self.event()
+            #self.draw()
+
+            #if self.phase == 0:
+                #if self.session.clock.getTime() - self.start_time > self.phase_times[0]:
+                    #self.phase_forward()
+
+            #if self.phase == 1:
+                #self.stopped = True
+
+        #self.stop()
 
 class BinocularDotsTrial(MRITrial):
 
@@ -42,6 +89,8 @@ class BinocularDotsTrial(MRITrial):
                                                  **kwargs)
         self.ID = trial_idx
         self.color = color
+
+        self.parameters['correct'] = None
 
         self.dot_stimulus = BinocularDotStimulus(screen=self.screen,
                                              trial=self,
@@ -71,7 +120,9 @@ class BinocularDotsTrial(MRITrial):
             self.fixation.draw()
             self.randombarstimulus.draw()
         elif self.phase == 1:    
-            self.dot_stimulus.draw()
+            if self.parameters['draw_dots']:
+                self.dot_stimulus.draw()
+
             self.fixation.draw()
             self.randombarstimulus.draw()
 
@@ -132,5 +183,18 @@ class BinocularDotsTrial(MRITrial):
                 self.dot_stimulus.element_master.color += delta
             else: 
                 self.dot_stimulus.element_master.color -= delta
+
+        if (key == 'z') and not self.parameters['correct']:
+            if self.parameters['direction'] == 180:
+                self.parameters['correct'] = True
+            else:
+                self.parameters['correct'] = False
+
+        if (key == 'm') and not self.parameters['correct']:
+            if self.parameters['direction'] == 0:
+                self.parameters['correct'] = True
+            else:
+                self.parameters['correct'] = False
+
 
         super(BinocularDotsTrial, self).key_event(key)
