@@ -63,6 +63,10 @@ class BinocularDotsTrial(Trial):
         
         while not self.stopped:
             
+            # events and draw
+            self.event()
+            self.draw()
+
             if self.phase == 0:
                 if self.session.clock.getTime() - self.start_time > self.phase_times[0]:
                     self.phase_forward()
@@ -75,9 +79,6 @@ class BinocularDotsTrial(Trial):
                 self.stopped = True
 
         
-            # events and draw
-            self.event()
-            self.draw()
     
         self.stop()
 
