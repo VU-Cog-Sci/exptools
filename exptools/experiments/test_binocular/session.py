@@ -34,7 +34,7 @@ class BinocularSession(MRISession):
         if 'simulate_mri_trigger' not in kwargs:
             self.simulate_mri_trigger = config['simulate_mri_trigger']
 
-        self.staircase = ThreeUpOneDownStaircase(0.5, 0.01, increment_value=0.01)
+        self.staircase = ThreeUpOneDownStaircase(0.5, 0.01)
 
 
     def run(self):
@@ -51,6 +51,8 @@ class BinocularSession(MRISession):
         total_length = block_length + rest_length
 
         while not self.stopped:
+
+
             color_idx = int(((self.current_tr-1) * self.tr)  / total_length) % 2
             color = ['r', 'b'][color_idx]
 
@@ -61,13 +63,26 @@ class BinocularSession(MRISession):
             direction = np.random.choice([180, 0])
             self.parameters['direction'] = direction
 
+            # Set coherence
+            self.parameters['coherence'] = self.staircase.get_intensity()
+
+            # Construct trial
             trial = BinocularDotsTrial(trial_idx, 
                                        parameters=self.parameters.copy(),
                                        screen=self.screen, 
                                        session=self, 
                                        color=color)
+
+
             logging.info('Running trial %d' % trial_idx)
             trial.run()
+
+            if trial.parameters['correct'] is not None:
+                logging.critical('Sending answer to staircase: %s' % trial.parameters['correct'])
+                self.staircase.answer(trial.parameters['correct'])
+                logging.critical('Current coherence: %.2f' % self.staircase.get_intensity())
+
+
             trial_idx += 1
 
         self.close()
