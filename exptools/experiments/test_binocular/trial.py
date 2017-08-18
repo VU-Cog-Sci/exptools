@@ -22,6 +22,7 @@ class WaitTrial(MRITrial):
         super(WaitTrial, self).key_event(key)
 
         if key == self.session.mri_trigger_key:
+            self.session.pausing = False
             self.stop()
 
         if key != self.session.mri_trigger_key:
@@ -136,6 +137,9 @@ class BinocularDotsTrial(MRITrial):
                 self.dot_stimulus.element_master.color += delta
             else: 
                 self.dot_stimulus.element_master.color -= delta
+
+        if key == 'p':
+            self.session.pausing = True
 
         if (key == self.parameters['left_key']) and (self.parameters['correct'] is None):
             logging.critical('Left key press')

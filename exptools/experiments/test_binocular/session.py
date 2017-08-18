@@ -28,6 +28,7 @@ class BinocularSession(MRISession):
         
         self.parameters = config
         self.stopped = False
+        self.pausing = True
 
         if 'tr' not in kwargs:
             self.tr = config['tr']
@@ -43,14 +44,17 @@ class BinocularSession(MRISession):
 
         trial_idx = 0
 
-        wait_trial = WaitTrial(session=self)
-        wait_trial.run()
 
         block_length = self.parameters['block_length']
         rest_length = self.parameters['rest_length']
         total_length = block_length + rest_length
 
         while not self.stopped:
+
+            if self.pausing:
+                logging.critical('Staring wait trial')
+                wait_trial = WaitTrial(session=self)
+                wait_trial.run()
 
 
             color_idx = int(((self.current_tr-1) * self.tr)  / total_length) % 2
