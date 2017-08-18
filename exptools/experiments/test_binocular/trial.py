@@ -28,54 +28,6 @@ class WaitTrial(MRITrial):
             self.stop()
             self.session.stop()
 
-#class FixationTrial(MRITrial):
-
-    #def __init__(self, trial_idx, parameters, duration, *args, **kwargs):
-        #print parameters
-
-        #super(FixationTrial, self).__init__(parameters, phase_durations=[duration], *args, **kwargs)
-
-        #size_fixation_pix = self.session.deg2pix(self.parameters['size_fixation_deg'])
-
-        #self.fixation = visual.GratingStim(self.screen, 
-                                               #tex='sin', 
-                                               #mask='circle', 
-                                               #size=size_fixation_pix, 
-                                               #texRes=512, 
-                                               #color='white', 
-                                               #sf=0)
-
-        #self.randombarstimulus = RandomBarFrameStimulus(screen=self.screen,
-                                                        #trial=self,
-                                                        #config=self.parameters,
-                                                        #session=self.session)
-
-
-    #def draw(self, *args, **kwargs):
-
-        #self.fixation.draw()
-        #self.randombarstimulus.draw()
-
-        #super(FixationTrial, self).draw()
-
-    #def run(self):
-
-        #self.start_time = self.session.clock.getTime()
-        
-        #while not self.stopped:
-            
-             #events and draw
-            #self.event()
-            #self.draw()
-
-            #if self.phase == 0:
-                #if self.session.clock.getTime() - self.start_time > self.phase_times[0]:
-                    #self.phase_forward()
-
-            #if self.phase == 1:
-                #self.stopped = True
-
-        #self.stop()
 
 class BinocularDotsTrial(MRITrial):
 
