@@ -52,13 +52,12 @@ class BinocularSession(MRISession):
         while not self.stopped:
 
             if self.pausing:
-                logging.critical('Staring wait trial')
                 wait_trial = WaitTrial(session=self)
                 wait_trial.run()
 
 
             color_idx = int(((self.current_tr-1) * self.tr)  / total_length) % 2
-            color = ['r', 'b'][color_idx]
+            self.parameters['color'] = ['r', 'b'][color_idx]
 
             show_dots = ((self.current_tr-1) * self.tr)  % total_length < block_length
             self.parameters['draw_dots'] = show_dots
@@ -74,8 +73,7 @@ class BinocularSession(MRISession):
             trial = BinocularDotsTrial(trial_idx, 
                                        parameters=self.parameters.copy(),
                                        screen=self.screen, 
-                                       session=self, 
-                                       color=color)
+                                       session=self, )
 
 
             logging.info('Running trial %d' % trial_idx)

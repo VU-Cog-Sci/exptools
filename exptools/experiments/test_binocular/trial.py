@@ -32,7 +32,7 @@ class WaitTrial(MRITrial):
 
 class BinocularDotsTrial(MRITrial):
 
-    def __init__(self, trial_idx, parameters, color='r', *args, **kwargs):
+    def __init__(self, trial_idx, parameters, *args, **kwargs):
             
         phase_durations = [parameters['fixation_time'], parameters['stimulus_time']]
 
@@ -42,7 +42,7 @@ class BinocularDotsTrial(MRITrial):
                                                  **kwargs)
 
         self.ID = trial_idx
-        self.color = color
+        self.color = self.parameters['color']
 
         self.parameters['correct'] = None
 
