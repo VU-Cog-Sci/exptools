@@ -20,5 +20,8 @@
 	"simulate_mri_trigger":true,
 
 	"block_length":6.0,
-	"rest_length":6.0
+	"rest_length":6.0,
+
+	"left_key":"z",
+	"right_Key":"m"
 }

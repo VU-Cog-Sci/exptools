@@ -184,13 +184,13 @@ class BinocularDotsTrial(MRITrial):
             else: 
                 self.dot_stimulus.element_master.color -= delta
 
-        if (key == 'z') and not self.parameters['correct']:
+        if (key == self.parameters['left_key']) and not self.parameters['correct']:
             if self.parameters['direction'] == 180:
                 self.parameters['correct'] = True
             else:
                 self.parameters['correct'] = False
 
-        if (key == 'm') and not self.parameters['correct']:
+        if (key == self.parameters['right']) and not self.parameters['correct']:
             if self.parameters['direction'] == 0:
                 self.parameters['correct'] = True
             else:
