@@ -67,7 +67,7 @@ class BinocularSession(MRISession):
             self.parameters['direction'] = direction
 
             # Set coherence
-            self.parameters['coherence'] = self.staircase.get_intensity()
+            self.parameters['coherence'] = np.max((np.min((self.staircase.get_intensity(), 1.0)), 0.0))
 
             # Construct trial
             trial = BinocularDotsTrial(trial_idx, 
