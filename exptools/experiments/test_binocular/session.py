@@ -35,7 +35,7 @@ class BinocularSession(MRISession):
         if 'simulate_mri_trigger' not in kwargs:
             self.simulate_mri_trigger = config['simulate_mri_trigger']
 
-        self.staircase = ThreeUpOneDownStaircase(0.5, 0.01)
+        self.staircase = ThreeUpOneDownStaircase(self.parameters['coherence'], 0.01)
 
 
     def run(self):
