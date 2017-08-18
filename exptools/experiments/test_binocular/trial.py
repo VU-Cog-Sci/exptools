@@ -39,6 +39,7 @@ class BinocularDotsTrial(MRITrial):
                                                  phase_durations=phase_durations,
                                                  *args, 
                                                  **kwargs)
+
         self.ID = trial_idx
         self.color = color
 
@@ -136,13 +137,15 @@ class BinocularDotsTrial(MRITrial):
             else: 
                 self.dot_stimulus.element_master.color -= delta
 
-        if (key == self.parameters['left_key']) and not self.parameters['correct']:
+        if (key == self.parameters['left_key']) and (self.parameters['correct'] is None):
+            logging.critical('Left key press')
             if self.parameters['direction'] == 180:
                 self.parameters['correct'] = True
             else:
                 self.parameters['correct'] = False
 
-        if (key == self.parameters['right']) and not self.parameters['correct']:
+        if (key == self.parameters['right_key']) and (self.parameters['correct'] is None):
+            logging.critical('Right key press')
             if self.parameters['direction'] == 0:
                 self.parameters['correct'] = True
             else:
