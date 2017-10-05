@@ -12,7 +12,7 @@ class Trial(object):
 		
 		self.events = []
 		self.phase = 0
-		self.phase_times = np.cumsum(np.array(self.phase_durations))
+		self.phase_times = [0.0 for i in range(len(self.phase_durations))]
 		self.stopped = False
 	
 	def create_stimuli(self):
