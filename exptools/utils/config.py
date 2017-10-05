@@ -33,9 +33,10 @@ class ExpToolsConfig(object):
         config_dir = os.path.expanduser('~/.exptools')
         config_file = os.path.join(config_dir, 'exptools.cfg')
 
-        default_file = os.path.join(exptools.__path__[0], 'default_config.cfg')
+        # default_file = os.path.join(exptools.__path__[0], 'default_config.cfg')
+        exp_config_file = os.path.join(os.path.abspath(os.getcwd()), 'exp_config.cfg')
 
-        self._config.read(default_file)
+        self._config.read(exp_config_file)
 
         if os.path.exists(config_dir):
             self._config.read(config_file)
