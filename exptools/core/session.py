@@ -53,17 +53,12 @@ class Session(object):
             value = kwargs.pop(argument, config.get('screen', argument))
             setattr(self, argument, value)
 
-
-        # the actual screen-getting
-        print self.full_screen
-
-
         if engine == 'pygaze':
             self.display = libscreen.Display(disptype='psychopy', 
                                              dispsize=self.size, 
                                              fgc=(255,0,0), 
                                              bgc=list((255*bgl for bgl in self.background_color)), 
-                                             screennr=self.screen_nr,
+                                             screennr=int(self.screen_nr),
                                              mousevisible=self.mouse_visible,
                                              fullscr=self.full_screen,
                                              blendMode='add')
@@ -72,7 +67,7 @@ class Session(object):
         elif engine == 'psychopy':   
             self.screen = visual.Window(size=self.size, 
                                         fullscr=self.full_screen, 
-                                        screen=self.screen_nr,
+                                        screen=int(self.screen_nr),
                                         allowGUI=True, 
                                         units='pix', 
                                         allowStencil=True, 
@@ -186,10 +181,114 @@ class Session(object):
 
 class EyelinkSession(Session):
     """docstring for EyelinkSession"""
-    def __init__(self, subject_initials, index_number):
+    def __init__(self, subject_initials, index_number, tracker_on=False, *args, **kwargs):
+
+        for argument in ['n_calib_points', 'sample_rate', 'calib_size', 'x_offset']:
+            value = kwargs.pop(argument, config.get('eyetracker', argument))
+            setattr(self, argument, value)
+
         super(EyelinkSession, self).__init__(subject_initials, index_number)
+
+        if tracker_on:
+            # self.create_tracker(auto_trigger_calibration = 1, calibration_type = 'HV9')
+            # if self.tracker_on:
+            #     self.tracker_setup()
+           # how many points do we want:
+            n_points = self.n_calib_points
+
+            # order should be with 5 points: center-up-down-left-right
+            # order should be with 9 points: center-up-down-left-right-leftup-rightup-leftdown-rightdown 
+            # order should be with 13: center-up-down-left-right-leftup-rightup-leftdown-rightdown-midleftmidup-midrightmidup-midleftmiddown-midrightmiddown
+            # so always: up->down or left->right
+
+            # creat tracker
+            self.create_tracker(auto_trigger_calibration=0, 
+                                calibration_type='HV%d'%self.n_calib_points, 
+                                sample_rate=self.sample_rate)
+
+            # it is setup to do a 9 or 5 point circular calibration, at reduced ecc
+
+            # create 4 x levels:
+            width = self.calib_size * DISPSIZE[1]
+            x_start = (DISPSIZE[0]-width)/2
+            x_end = DISPSIZE[0]-(DISPSIZE[0]-width)/2
+            x_range = np.linspace(x_start,x_end,5) + self.x_offset
+            y_start = (DISPSIZE[1]-width)/2
+            y_end = DISPSIZE[1]-(DISPSIZE[1]-width)/2
+            y_range = np.linspace(y_start,y_end,5) 
+
+            # set calibration targets    
+            cal_center = [x_range[2],y_range[2]]
+            cal_left = [x_range[0],y_range[2]]
+            cal_right = [x_range[4],y_range[2]]
+            cal_up = [x_range[2],y_range[0]]
+            cal_down = [x_range[2],y_range[4]]
+            cal_leftup = [x_range[1],y_range[1]]
+            cal_rightup = [x_range[3],y_range[1]]
+            cal_leftdown = [x_range[1],y_range[3]]
+            cal_rightdown = [x_range[3],y_range[3]]            
+            
+            # create 4 x levels:
+            width = self.eyelink_calib_size*0.75 * DISPSIZE[1]
+            x_start = (DISPSIZE[0]-width)/2
+            x_end = DISPSIZE[0]-(DISPSIZE[0]-width)/2
+            x_range = np.linspace(x_start,x_end,5) + self.x_offset
+            y_start = (DISPSIZE[1]-width)/2
+            y_end = DISPSIZE[1]-(DISPSIZE[1]-width)/2
+            y_range = np.linspace(y_start,y_end,5) 
+
+            # set calibration targets    
+            val_center = [x_range[2],y_range[2]]
+            val_left = [x_range[0],y_range[2]]
+            val_right = [x_range[4],y_range[2]]
+            val_up = [x_range[2],y_range[0]]
+            val_down = [x_range[2],y_range[4]]
+            val_leftup = [x_range[1],y_range[1]]
+            val_rightup = [x_range[3],y_range[1]]
+            val_leftdown = [x_range[1],y_range[3]]
+            val_rightdown = [x_range[3],y_range[3]]   
+
+            # get them in the right order
+            if n_points == 5:
+                cal_xs = np.round([cal_center[0],cal_up[0],cal_down[0],cal_left[0],cal_right[0]])
+                cal_ys = np.round([cal_center[1],cal_up[1],cal_down[1],cal_left[1],cal_right[1]])
+                val_xs = np.round([val_center[0],val_up[0],val_down[0],val_left[0],val_right[0]])
+                val_ys = np.round([val_center[1],val_up[1],val_down[1],val_left[1],val_right[1]])
+            elif n_points == 9:
+                cal_xs = np.round([cal_center[0],cal_up[0],cal_down[0],cal_left[0],cal_right[0],cal_leftup[0],cal_rightup[0],cal_leftdown[0],cal_rightdown[0]])
+                cal_ys = np.round([cal_center[1],cal_up[1],cal_down[1],cal_left[1],cal_right[1],cal_leftup[1],cal_rightup[1],cal_leftdown[1],cal_rightdown[1]])         
+                val_xs = np.round([val_center[0],val_up[0],val_down[0],val_left[0],val_right[0],val_leftup[0],val_rightup[0],val_leftdown[0],val_rightdown[0]])
+                val_ys = np.round([val_center[1],val_up[1],val_down[1],val_left[1],val_right[1],val_leftup[1],val_rightup[1],val_leftdown[1],val_rightdown[1]])                     
+            #xs = np.round(np.linspace(x_edge,DISPSIZE[0]-x_edge,n_points))
+            #ys = np.round([self.ywidth/3*[1,2][pi%2] for pi in range(n_points)])
+
+            # put the points in format that eyelink wants them, which is
+            # calibration_targets / validation_targets: 'x1,y1 x2,y2 ... xz,yz'
+            calibration_targets = ' '.join(['%d,%d'%(cal_xs[pi],cal_ys[pi]) for pi in range(n_points)])
+            # just copy calibration targets as validation for now:
+            #validation_targets = calibration_targets
+            validation_targets = ' '.join(['%d,%d'%(val_xs[pi],val_ys[pi]) for pi in range(n_points)])
+
+            # point_indices: '0, 1, ... n'
+            point_indices = ', '.join(['%d'%pi for pi in range(n_points)])
+
+            # and send these targets to the custom calibration function:
+            self.custom_calibration(calibration_targets=calibration_targets,
+                validation_targets=validation_targets,point_indices=point_indices,
+                n_points=n_points,randomize_order=True,repeat_first_target=True,)
+            # reapply settings:
+            self.tracker_setup()
+        else:
+            self.create_tracker(tracker_on=False)
     
-    def create_tracker(self, tracker_on = True, sensitivity_class = 0, split_screen = False, screen_half = 'L', auto_trigger_calibration = 1, calibration_type = 'HV9', sample_rate = 1000):
+    def create_tracker(self, 
+                        tracker_on=True, 
+                        sensitivity_class=0, 
+                        split_screen=False, 
+                        screen_half='L', 
+                        auto_trigger_calibration=1, 
+                        calibration_type='HV9', 
+                        sample_rate=1000):
         """
         tracker sets up the connection and inputs the parameters.
         only start tracker after the screen is taken, its parameters are set,
@@ -217,7 +316,35 @@ class EyelinkSession(Session):
             self.tracker_on = False
             return
 
-        self.apply_settings(sensitivity_class = sensitivity_class, split_screen = split_screen, screen_half = screen_half, auto_trigger_calibration = auto_trigger_calibration, calibration_type = calibration_type, sample_rate = sample_rate)
+        self.apply_settings(sensitivity_class=sensitivity_class, 
+                            split_screen=split_screen, 
+                            screen_half=screen_half, 
+                            auto_trigger_calibration=auto_trigger_calibration, 
+                            calibration_type=calibration_type, 
+                            sample_rate=sample_rate)
+
+    def custom_calibration(self,calibration_targets,validation_targets,point_indices,n_points,
+        randomize_order=0,repeat_first_target=1):
+        
+        # send the messages:
+        self.tracker.send_command('calibration_type = HV%d'%n_points  )
+        self.tracker.send_command('generate_default_targets = NO')
+        self.tracker.send_command('randomize_calibration_order %d'%randomize_order)
+        self.tracker.send_command('randomize_validation_order %d'%randomize_order)
+        self.tracker.send_command('cal_repeat_first_target  %d'%repeat_first_target)
+        self.tracker.send_command('val_repeat_first_target  %d'%repeat_first_target)
+
+        if repeat_first_target:
+            n_points+=1
+         
+        self.tracker.send_command('calibration_samples=%d'%n_points)
+        self.tracker.send_command('calibration_sequence=%s'%point_indices)
+        self.tracker.send_command('calibration_targets = %s'%calibration_targets)
+         
+        self.tracker.send_command('validation_samples=%d'%n_points)
+        self.tracker.send_command('validation_sequence=%s'%point_indices)
+        self.tracker.send_command('validation_targets = %s'%validation_targets)
+
         
     def apply_settings(self, sensitivity_class = 0, split_screen = False, screen_half = 'L', auto_trigger_calibration = True, sample_rate = 1000, calibration_type = 'HV9', margin = 60):
         

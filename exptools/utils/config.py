@@ -23,23 +23,22 @@ boolean_vars = [('screen', 'wait_blanking'),
                 ('screen', 'full_screen'),
                 ('screen', 'mouse_visible')]
 
-
 class ExpToolsConfig(object):
 
     def __init__(self):
 
         self._config = configparser.ConfigParser()
         
-        config_dir = os.path.expanduser('~/.exptools')
-        config_file = os.path.join(config_dir, 'exptools.cfg')
+        # config_dir = os.path.expanduser('~/.exptools')
+        # config_file = os.path.join(config_dir, 'exptools.cfg')
 
         # default_file = os.path.join(exptools.__path__[0], 'default_config.cfg')
         exp_config_file = os.path.join(os.path.abspath(os.getcwd()), 'exp_config.cfg')
 
         self._config.read(exp_config_file)
 
-        if os.path.exists(config_dir):
-            self._config.read(config_file)
+        # if os.path.exists(config_dir):
+        #     self._config.read(config_file)
 
     def get(self, section, option):
         if (section, option) in list_vars:
@@ -47,7 +46,7 @@ class ExpToolsConfig(object):
         elif (section, option) in boolean_vars:
             return self._config.getboolean(section, option)
         else:
-            return int(self._config.get(section, option))
+            return float(self._config.get(section, option))
 
     def set(self, section, option, value):
         if isinstance(value, bool) or isinstance(value, list):
@@ -59,5 +58,5 @@ class ExpToolsConfig(object):
 
 def test_exptools_config():
     config = ExpToolsConfig()
-    assert('display' in config._config.sections())
+    assert('screen' in config._config.sections())
 
