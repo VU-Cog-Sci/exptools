@@ -338,7 +338,6 @@ class EyelinkSession(Session):
 
         self.eyelink_temp_file = self.subject_initials[:2] + '_' + str(self.index_number) + '_' + str(np.random.randint(99)) + '.edf'
 
-
         if tracker_on:
             # create actual tracker
             # try:
