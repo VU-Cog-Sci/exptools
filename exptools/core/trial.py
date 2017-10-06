@@ -1,6 +1,7 @@
 import numpy as np
 from .session import MRISession
 from psychopy import logging, event
+import time as time_module 
 
 class Trial(object):
     def __init__(self, parameters = {}, phase_durations = [], session = None, screen = None, tracker = None):
