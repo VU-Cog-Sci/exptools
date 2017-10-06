@@ -30,7 +30,7 @@ from .. import config
 
 class Session(object):
     """Session is a main class that creates screen and file properties"""
-    def __init__(self, subject_initials, index_number):
+    def __init__(self, subject_initials, index_number, **kwargs):
         super(Session, self).__init__()
         self.subject_initials = subject_initials
         self.index_number = index_number
@@ -43,7 +43,7 @@ class Session(object):
         self.logging = logging
 
         self.create_output_filename()
-
+        self.create_screen(engine='pygaze', **kwargs)
         self.start_time = self.clock.getTime()
     
     def create_screen(self, engine='pygaze', **kwargs):
@@ -216,15 +216,21 @@ class MRISession(Session):
 
 class EyelinkSession(Session):
     """docstring for EyelinkSession"""
-    def __init__(self, subject_initials, index_number, tracker_on=False, *args, **kwargs):
+    def __init__(self, subject_initials, index_number, tracker_on=0, *args, **kwargs):
+
+        super(EyelinkSession, self).__init__(subject_initials, index_number, *args, **kwargs)
 
         for argument in ['n_calib_points', 'sample_rate', 'calib_size', 'x_offset']:
             value = kwargs.pop(argument, config.get('eyetracker', argument))
             setattr(self, argument, value)
 
-        super(EyelinkSession, self).__init__(subject_initials, index_number)
-
-        if tracker_on:
+        if tracker_on == 1:
+            self.create_tracker(tracker_on=True, 
+                                calibration_type='HV%d'%self.n_calib_points, 
+                                sample_rate=self.sample_rate)
+            if self.tracker != None:
+                self.tracker_setup()
+        elif tracker_on == 2:
             # self.create_tracker(auto_trigger_calibration = 1, calibration_type = 'HV9')
             # if self.tracker_on:
             #     self.tracker_setup()
@@ -335,16 +341,16 @@ class EyelinkSession(Session):
 
         if tracker_on:
             # create actual tracker
-            try:
-                self.tracker = eyetracker.EyeTracker(self.display, trackertype='eyelink', resolution=self.display.dispsize, data_file=self.eyelink_temp_file, bgc=self.display.bgc)
-                self.tracker_on = True
-            except:
-                print('\ncould not connect to tracker')
-                self.tracker = None
-                self.tracker_on = False
-                self.eye_measured, self.sample_rate, self.CR_mode, self.file_sample_filter, self.link_sample_filter = 'N', sample_rate, 1, 1, 1
+            # try:
+            self.tracker = eyetracker.EyeTracker(self.display, trackertype='eyelink', resolution=self.display.dispsize, data_file=self.eyelink_temp_file, bgc=self.display.bgc)
+            self.tracker_on = True
+            # except:
+            #     print('\ncould not connect to tracker')
+            #     self.tracker = None
+            #     self.tracker_on = False
+            #     self.eye_measured, self.sample_rate, self.CR_mode, self.file_sample_filter, self.link_sample_filter = 'N', sample_rate, 1, 1, 1
 
-                return
+            #     return
         else:
             # not even create dummy tracker
             self.tracker = None
@@ -392,7 +398,7 @@ class EyelinkSession(Session):
         self.tracker.send_command("link_sample_data = GAZE,GAZERES,AREA,HREF,PUPIL,STATUS")
         self.tracker.send_command("link_event_data = GAZE,GAZERES,AREA,HREF,VELOCITY,FIXAVG,STATUS")
         # set furtheinfo
-        self.tracker.send_command("screen_pixel_coords =  0 0 %d %d" %self.screen_pix_size)
+        self.tracker.send_command("screen_pixel_coords =  0 0 %d %d" %(self.screen_pix_size[0], self.screen_pix_size[1]))
         self.tracker.send_command("pupil_size_diameter = %s"%('YES'));
         self.tracker.send_command("heuristic_filter %d %d"%([1, 0][sensitivity_class], 1))
         self.tracker.send_command("sample_rate = %d" % sample_rate)
