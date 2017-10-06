@@ -29,6 +29,16 @@ class Trial(object):
             self.tracker.log('trial ' + str(self.ID) + ' started at ' + str(self.start_time) )
             self.tracker.send_command('record_status_message "Trial ' + str(self.ID) + '"')
         self.events.append('trial ' + str(self.ID) + ' started at ' + str(self.start_time))
+
+        while not self.stopped:
+            self.check_phase_time()
+
+            # events and draw
+            self.event()
+            self.draw()
+
+        self.stop()
+
         
         
     def stop(self):
