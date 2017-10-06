@@ -76,6 +76,8 @@ class Session(object):
                                         winType='pyglet')
 
         self.screen.setMouseVisible(self.mouse_visible)
+        event.Mouse(visible=self.mouse_visible, win=self.screen)
+
         self.screen.setColor(self.background_color)
         
         self.screen.background_color = self.background_color
@@ -100,7 +102,7 @@ class Session(object):
             
         self.output_file = os.path.join(data_directory, self.subject_initials + '_' + str(self.index_number) + '_' + opfn )
     
-    def pen_input_file(self):
+    def open_input_file(self):
         """
         This method opens a pickle file that has input data in it.
         we assume the input data consists of two arrays - one for parameters and one for timings. 

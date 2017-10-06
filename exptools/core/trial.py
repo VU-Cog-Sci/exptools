@@ -75,6 +75,7 @@ class Trial(object):
         and implements alarms based on time. The transgression of an alarm time
         prompts the trial to either phase forward or stop, depending on the present phase.
         """
+        # object variable to record all trial phase times in past and present
         self.phase_times[self.phase] = self.session.clock.getTime()
         # the first phase has no previous phase
         if self.phase == 0:
