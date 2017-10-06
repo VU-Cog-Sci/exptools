@@ -10,9 +10,10 @@ version = '0.2'
 install_requires = [
     'quest',
     'numpy',
-    'pylink',
+    # 'pylink', # this is not the pylink that we want to be using
     'psychopy',
     'pygame',
+    # 'pygaze',
     # List your project dependencies here.
     # For more details, see:
     # http://packages.python.org/distribute/setuptools.html#declaring-dependencies
