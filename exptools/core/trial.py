@@ -20,10 +20,10 @@ class Trial(object):
         self.phase = 0
         self.phase_times = np.cumsum(np.array(self.phase_durations))
         self.stopped = False
-    
+
     def create_stimuli(self):
         pass
-    
+
     def run(self):
         self.start_time = self.session.clock.getTime()
         if self.tracker:
@@ -34,8 +34,8 @@ class Trial(object):
         while not self.stopped:
             self.draw()
             self.event()
-        
-        
+
+
     def stop(self):
         self.stop_time = self.session.clock.getTime()
         self.stopped = True
@@ -47,13 +47,13 @@ class Trial(object):
             self.tracker.log('trial ' + str(self.ID) + ' stopped at ' + str(self.stop_time) )
         self.session.outputDict['eventArray'].append(self.events)
         self.session.outputDict['parameterArray'].append(self.parameters)
-        
+
     def key_event(self, key):
         if self.tracker:
             self.tracker.log('trial ' + str(self.ID) + ' event ' + str(key) + ' at ' + str(self.session.clock.getTime()) )
         self.events.append('trial ' + str(self.ID) + ' event ' + str(key) + ' at ' + str(self.session.clock.getTime()))
 
-    
+
     def feedback(self, answer, setting):
         """feedback give the subject feedback on performance"""
         if setting != 0.0:
@@ -61,10 +61,10 @@ class Trial(object):
                 self.session.play_sound( sound_index = 0 )
             else:
                 self.session.play_sound( sound_index = 1 )
-    
+
     def draw(self):
         """draw function of the Trial superclass finishes drawing by clearing, drawing the viewport and swapping buffers"""
-        self.screen.flip() 
+        self.screen.flip()
 
     def phase_forward(self):
         """go one phase forward"""
@@ -78,6 +78,7 @@ class Trial(object):
     def event(self):
         for ev in event.getKeys():
             self.key_event(ev)
+
         
 class MRITrial(Trial):
 

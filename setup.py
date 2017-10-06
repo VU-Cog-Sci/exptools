@@ -5,7 +5,7 @@ here = os.path.abspath(os.path.dirname(__file__))
 README = open(os.path.join(here, 'README.rst')).read()
 
 
-version = '0.1'
+version = '0.2'
 
 install_requires = [
     'quest',
@@ -29,9 +29,9 @@ setup(name='exptools',
     keywords='',
     author='Gilles de Hollander, Tomas Knapen, Daan van Es',
     author_email='gilles.de.hollander@gmail.com',
-    url='',
-    license='',
+    url='https://github.com/Gilles86/exp_tools',
+    license='MIT',
     packages=find_packages(),
     zip_safe=False,
-    install_requires=install_requires,
+    install_requires=install_requires, 
 )
