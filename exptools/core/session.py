@@ -244,12 +244,12 @@ class EyelinkSession(Session):
             # it is setup to do a 9 or 5 point circular calibration, at reduced ecc
 
             # create 4 x levels:
-            width = self.calib_size * DISPSIZE[1]
-            x_start = (DISPSIZE[0]-width)/2
-            x_end = DISPSIZE[0]-(DISPSIZE[0]-width)/2
+            width = self.calib_size * self.size[1]
+            x_start = (self.size[0]-width)/2
+            x_end = self.size[0]-(self.size[0]-width)/2
             x_range = np.linspace(x_start,x_end,5) + self.x_offset
-            y_start = (DISPSIZE[1]-width)/2
-            y_end = DISPSIZE[1]-(DISPSIZE[1]-width)/2
+            y_start = (self.size[1]-width)/2
+            y_end = self.size[1]-(self.size[1]-width)/2
             y_range = np.linspace(y_start,y_end,5) 
 
             # set calibration targets    
@@ -264,12 +264,12 @@ class EyelinkSession(Session):
             cal_rightdown = [x_range[3],y_range[3]]            
             
             # create 4 x levels:
-            width = self.eyelink_calib_size*0.75 * DISPSIZE[1]
-            x_start = (DISPSIZE[0]-width)/2
-            x_end = DISPSIZE[0]-(DISPSIZE[0]-width)/2
+            width = self.eyelink_calib_size*0.75 * self.size[1]
+            x_start = (self.size[0]-width)/2
+            x_end = self.size[0]-(self.size[0]-width)/2
             x_range = np.linspace(x_start,x_end,5) + self.x_offset
-            y_start = (DISPSIZE[1]-width)/2
-            y_end = DISPSIZE[1]-(DISPSIZE[1]-width)/2
+            y_start = (self.size[1]-width)/2
+            y_end = self.size[1]-(self.size[1]-width)/2
             y_range = np.linspace(y_start,y_end,5) 
 
             # set calibration targets    
@@ -294,7 +294,7 @@ class EyelinkSession(Session):
                 cal_ys = np.round([cal_center[1],cal_up[1],cal_down[1],cal_left[1],cal_right[1],cal_leftup[1],cal_rightup[1],cal_leftdown[1],cal_rightdown[1]])         
                 val_xs = np.round([val_center[0],val_up[0],val_down[0],val_left[0],val_right[0],val_leftup[0],val_rightup[0],val_leftdown[0],val_rightdown[0]])
                 val_ys = np.round([val_center[1],val_up[1],val_down[1],val_left[1],val_right[1],val_leftup[1],val_rightup[1],val_leftdown[1],val_rightdown[1]])                     
-            #xs = np.round(np.linspace(x_edge,DISPSIZE[0]-x_edge,n_points))
+            #xs = np.round(np.linspace(x_edge,self.size[0]-x_edge,n_points))
             #ys = np.round([self.ywidth/3*[1,2][pi%2] for pi in range(n_points)])
 
             # put the points in format that eyelink wants them, which is
