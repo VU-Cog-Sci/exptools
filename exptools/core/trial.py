@@ -36,6 +36,8 @@ class Trial(object):
             self.draw()
             self.event()
 
+        self.stop()
+
 
     def stop(self):
         self.stop_time = self.session.clock.getTime()
