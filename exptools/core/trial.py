@@ -32,6 +32,7 @@ class Trial(object):
         self.events.append('trial ' + str(self.ID) + ' started at ' + str(self.start_time))
 
         while not self.stopped:
+            self.check_phase_time()
             self.draw()
             self.event()
 
@@ -43,7 +44,7 @@ class Trial(object):
             # pipe parameters to the eyelink data file in a for loop so as to limit the risk of flooding the buffer
             for k in self.parameters.keys():
                 self.tracker.log('trial ' + str(self.ID) + ' parameter\t' + k + ' : ' + str(self.parameters[k]) )
-                time_module.sleep(0.0005)
+                time_module.sleep(0.0001)
             self.tracker.log('trial ' + str(self.ID) + ' stopped at ' + str(self.stop_time) )
         self.session.outputDict['eventArray'].append(self.events)
         self.session.outputDict['parameterArray'].append(self.parameters)
@@ -73,13 +74,39 @@ class Trial(object):
         self.events.append('trial ' + str(self.ID) + ' phase ' + str(self.phase) + ' started at ' + phase_time)
         if self.tracker:
             self.tracker.log('trial ' + str(self.ID) + ' phase ' + str(self.phase) + ' started at ' + phase_time )
-            time_module.sleep(0.0005)
+            time_module.sleep(0.0001)
 
     def event(self):
         for ev in event.getKeys():
             self.key_event(ev)
 
-        
+    def check_phase_time(self):
+        """
+        check_phase_time checks the phase time of the present phase
+        and implements alarms based on time. The transgression of an alarm time
+        prompts the trial to either phase forward or stop, depending on the present phase.
+        """
+        # object variable to record all trial phase times in past and present
+        self.phase_times[self.phase] = self.session.clock.getTime()
+        # the first phase has no previous phase
+        if self.phase == 0:
+            previous_time = self.start_time
+        elif self.phase > 0:
+            previous_time = self.phase_times[self.phase - 1]
+        # time elapsed since start of this phase
+        this_phase_time = self.phase_times[self.phase] - previous_time
+        # check for alarm
+        if this_phase_time > self.phase_durations[self.phase]:
+            # last trial stops, others phase forward
+            if self.phase == (len(self.phase_durations) - 1):
+                self.stopped = True
+            else:
+                self.phase_forward()
+                # and, because trial phases should be instantaneously skipped if 
+                # the phase duration is below 0, this function calls itself when phasing forward.
+                self.check_phase_time()
+
+            
 class MRITrial(Trial):
 
 
