@@ -191,7 +191,7 @@ class MRISession(Session):
                  index_number,
                  tr=2, 
                  simulate_mri_trigger=True, 
-                 mri_trigger_key=config.get('mri', 'mri_trigger_key'), 
+                 mri_trigger_key=None, 
                  *args, 
                  **kwargs):
 
@@ -199,7 +199,12 @@ class MRISession(Session):
         super(MRISession, self).__init__(subject_initials, index_number, *args, **kwargs)
 
         self.simulate_mri_trigger = simulate_mri_trigger
-        self.mri_trigger_key = mri_trigger_key    
+
+        if mri_trigger_key is None:
+            self.mri_trigger_key = config.get('mri', 'mri_trigger_key')    
+        else:
+            self.mri_trigger_key = mri_trigger_key
+
         self.time_of_last_tr = self.clock.getTime()
 
 
