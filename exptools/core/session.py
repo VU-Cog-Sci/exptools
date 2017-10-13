@@ -59,6 +59,7 @@ class Session(object):
             setattr(self, argument, value)
 
         if engine == 'pygaze':
+            setattr(pygaze.settings, 'FULLSCREEN', self.full_screen)
             self.display = libscreen.Display(disptype='psychopy', 
                                              dispsize=self.size, 
                                              fgc=(255,0,0), 
