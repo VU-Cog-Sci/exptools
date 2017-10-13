@@ -43,7 +43,10 @@ class Session(object):
         self.logging = logging
 
         self.create_output_filename()
-        self.create_screen(engine='pygaze', **kwargs)
+
+        engine = kwargs.pop('engine', 'pygaze')
+        self.create_screen(engine=engine, **kwargs)
+
         self.start_time = self.clock.getTime()
     
     def create_screen(self, engine='pygaze', **kwargs):
