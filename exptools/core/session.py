@@ -43,7 +43,10 @@ class Session(object):
         self.logging = logging
 
         self.create_output_filename()
-        self.create_screen(engine='pygaze', **kwargs)
+
+        engine = kwargs.pop('engine', 'pygaze')
+        self.create_screen(engine=engine, **kwargs)
+
         self.start_time = self.clock.getTime()
     
     def create_screen(self, engine='pygaze', **kwargs):
@@ -56,6 +59,7 @@ class Session(object):
             setattr(self, argument, value)
 
         if engine == 'pygaze':
+            setattr(pygaze.settings, 'FULLSCREEN', self.full_screen)
             self.display = libscreen.Display(disptype='psychopy', 
                                              dispsize=self.size, 
                                              fgc=(255,0,0), 
@@ -191,7 +195,7 @@ class MRISession(Session):
                  index_number,
                  tr=2, 
                  simulate_mri_trigger=True, 
-                 mri_trigger_key=config.get('mri', 'mri_trigger_key'), 
+                 mri_trigger_key=None, 
                  *args, 
                  **kwargs):
 
@@ -199,7 +203,12 @@ class MRISession(Session):
         super(MRISession, self).__init__(subject_initials, index_number, *args, **kwargs)
 
         self.simulate_mri_trigger = simulate_mri_trigger
-        self.mri_trigger_key = mri_trigger_key    
+
+        if mri_trigger_key is None:
+            self.mri_trigger_key = config.get('mri', 'mri_trigger_key')    
+        else:
+            self.mri_trigger_key = mri_trigger_key
+
         self.time_of_last_tr = self.clock.getTime()
 
 
