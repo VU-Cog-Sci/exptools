@@ -32,6 +32,8 @@ class Trial(object):
             self.tracker.send_command('record_status_message "Trial ' + str(self.ID) + '"')
         self.events.append('trial ' + str(self.ID) + ' started at ' + str(self.start_time))
 
+        self.create_stimuli()
+
         while not self.stopped:
             self.check_phase_time()
             self.draw()
