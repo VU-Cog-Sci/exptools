@@ -66,7 +66,8 @@ class Session(object):
                                              bgc=list((255*bgl for bgl in self.background_color)), 
                                              screennr=int(self.screen_nr),
                                              mousevisible=self.mouse_visible,
-                                             fullscr=self.full_screen,)
+                                             fullscr=self.full_screen, 
+                                             allowStencil=True)
                 
             self.screen = pygaze.expdisplay
         elif engine == 'psychopy':   
