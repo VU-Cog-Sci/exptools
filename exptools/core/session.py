@@ -17,6 +17,7 @@ from scipy.io import wavfile
 import datetime
 import os
 import pickle as pkl
+import pandas as pd
 
 import pyaudio, wave
 import numpy as np
@@ -143,6 +144,9 @@ class Session(object):
         parsopf = open(self.output_file + '_outputDict.pkl', 'a')
         pkl.dump(self.outputDict,parsopf)
         parsopf.close()
+        # also output parameters as tsv
+        opd = pd.DataFrame.from_records(elf.outputDict['parameterArray'])
+        opd.to_csv(path=self.output_file + '.tsv', sep='\t', encoding='utf-8')
     
     def play_sound(self, sound_index = '0'):
         """docstring for play_sound"""
