@@ -145,7 +145,7 @@ class Session(object):
         pkl.dump(self.outputDict,parsopf)
         parsopf.close()
         # also output parameters as tsv
-        opd = pd.DataFrame.from_records(elf.outputDict['parameterArray'])
+        opd = pd.DataFrame.from_records(self.outputDict['parameterArray'])
         opd.to_csv(path=self.output_file + '.tsv', sep='\t', encoding='utf-8')
     
     def play_sound(self, sound_index = '0'):
