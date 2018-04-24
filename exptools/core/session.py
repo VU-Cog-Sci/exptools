@@ -146,7 +146,7 @@ class Session(object):
         parsopf.close()
         # also output parameters as tsv
         opd = pd.DataFrame.from_records(self.outputDict['parameterArray'])
-        opd.to_csv(path=self.output_file + '.tsv', sep='\t', encoding='utf-8')
+        opd.to_csv(path_or_buf=self.output_file + '.tsv', sep='\t', encoding='utf-8')
     
     def play_sound(self, sound_index = '0'):
         """docstring for play_sound"""
