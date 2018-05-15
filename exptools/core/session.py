@@ -260,16 +260,12 @@ class EyelinkSession(Session):
             #     self.tracker_setup()
            # how many points do we want:
             n_points = self.n_calib_points
-
-            # order should be with 5 points: center-up-down-left-right
-            # order should be with 9 points: center-up-down-left-right-leftup-rightup-leftdown-rightdown 
-            # order should be with 13: center-up-down-left-right-leftup-rightup-leftdown-rightdown-midleftmidup-midrightmidup-midleftmiddown-midrightmiddown
-            # so always: up->down or left->right
-
-            # creat tracker
+            # create tracker
             self.create_tracker(auto_trigger_calibration=0, 
                                 calibration_type='HV%d'%self.n_calib_points, 
                                 sample_rate=self.sample_rate)
+
+            calibration_targets, validation_targets, point_indices = self._setup_custom_calibration_points()
 
             # and send these targets to the custom calibration function:
             self.custom_calibration(calibration_targets=calibration_targets,
@@ -539,6 +535,10 @@ class EyelinkSession(Session):
             self.tracker.log('sound ' + str(sound_index) + ' at ' + str(core.getTime()) )
 
     def _setup_custom_calibration_points(self):
+        # order should be with 5 points: center-up-down-left-right
+        # order should be with 9 points: center-up-down-left-right-leftup-rightup-leftdown-rightdown 
+        # order should be with 13: center-up-down-left-right-leftup-rightup-leftdown-rightdown-midleftmidup-midrightmidup-midleftmiddown-midrightmiddown
+        # so always: up->down or left->right
         # it is setup to do a 9 or 5 point circular calibration, at reduced ecc
 
         # create 4 x levels:
@@ -605,7 +605,7 @@ class EyelinkSession(Session):
         # point_indices: '0, 1, ... n'
         point_indices = ', '.join(['%d'%pi for pi in range(self.n_calib_points)])
 
-        return 
+        return calibration_targets, validation_targets, point_indices
 
 
 class StarStimSession(EyelinkSession):
