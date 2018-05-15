@@ -216,7 +216,6 @@ class MRISession(Session):
 
         self.time_of_last_tr = self.clock.getTime()
 
-
         self.tr = tr
         self.current_tr = 0
         self.target_trigger_time = self.start_time + self.tr
@@ -237,6 +236,17 @@ class EyelinkSession(Session):
         for argument in ['n_calib_points', 'sample_rate', 'calib_size', 'x_offset']:
             value = kwargs.pop(argument, config.get('eyetracker', argument))
             setattr(self, argument, value)
+
+        # set pygaze settings
+        pygaze.settings.full_screen = self.full_screen
+        pygaze.settings.BGC = list(((np.array(self.background_color) + 1.0)/2.0 * 255).astype(int))
+        if hasattr(self, 'foreground_color'):
+            pygaze.settings.FGC = self.foreground_color
+        else:
+            pygaze.settings.FGC = list(((-np.array(self.background_color) + 1.0)/2.0 * 255).astype(int))
+        pygaze.settings.DISPSIZE = self.screen.size
+        pygaze.settings.SCREENSIZE = self.physical_screen_size
+        pygaze.settings.SCREENDIST = self.physical_screen_distance
 
         if tracker_on == 1:
             self.create_tracker(tracker_on=True, 
@@ -261,76 +271,10 @@ class EyelinkSession(Session):
                                 calibration_type='HV%d'%self.n_calib_points, 
                                 sample_rate=self.sample_rate)
 
-            # it is setup to do a 9 or 5 point circular calibration, at reduced ecc
-
-            # create 4 x levels:
-            width = self.calib_size * self.size[1]
-            x_start = (self.size[0]-width)/2
-            x_end = self.size[0]-(self.size[0]-width)/2
-            x_range = np.linspace(x_start,x_end,5) + self.x_offset
-            y_start = (self.size[1]-width)/2
-            y_end = self.size[1]-(self.size[1]-width)/2
-            y_range = np.linspace(y_start,y_end,5) 
-
-            # set calibration targets    
-            cal_center = [x_range[2],y_range[2]]
-            cal_left = [x_range[0],y_range[2]]
-            cal_right = [x_range[4],y_range[2]]
-            cal_up = [x_range[2],y_range[0]]
-            cal_down = [x_range[2],y_range[4]]
-            cal_leftup = [x_range[1],y_range[1]]
-            cal_rightup = [x_range[3],y_range[1]]
-            cal_leftdown = [x_range[1],y_range[3]]
-            cal_rightdown = [x_range[3],y_range[3]]            
-            
-            # create 4 x levels:
-            width = self.eyelink_calib_size*0.75 * self.size[1]
-            x_start = (self.size[0]-width)/2
-            x_end = self.size[0]-(self.size[0]-width)/2
-            x_range = np.linspace(x_start,x_end,5) + self.x_offset
-            y_start = (self.size[1]-width)/2
-            y_end = self.size[1]-(self.size[1]-width)/2
-            y_range = np.linspace(y_start,y_end,5) 
-
-            # set calibration targets    
-            val_center = [x_range[2],y_range[2]]
-            val_left = [x_range[0],y_range[2]]
-            val_right = [x_range[4],y_range[2]]
-            val_up = [x_range[2],y_range[0]]
-            val_down = [x_range[2],y_range[4]]
-            val_leftup = [x_range[1],y_range[1]]
-            val_rightup = [x_range[3],y_range[1]]
-            val_leftdown = [x_range[1],y_range[3]]
-            val_rightdown = [x_range[3],y_range[3]]   
-
-            # get them in the right order
-            if n_points == 5:
-                cal_xs = np.round([cal_center[0],cal_up[0],cal_down[0],cal_left[0],cal_right[0]])
-                cal_ys = np.round([cal_center[1],cal_up[1],cal_down[1],cal_left[1],cal_right[1]])
-                val_xs = np.round([val_center[0],val_up[0],val_down[0],val_left[0],val_right[0]])
-                val_ys = np.round([val_center[1],val_up[1],val_down[1],val_left[1],val_right[1]])
-            elif n_points == 9:
-                cal_xs = np.round([cal_center[0],cal_up[0],cal_down[0],cal_left[0],cal_right[0],cal_leftup[0],cal_rightup[0],cal_leftdown[0],cal_rightdown[0]])
-                cal_ys = np.round([cal_center[1],cal_up[1],cal_down[1],cal_left[1],cal_right[1],cal_leftup[1],cal_rightup[1],cal_leftdown[1],cal_rightdown[1]])         
-                val_xs = np.round([val_center[0],val_up[0],val_down[0],val_left[0],val_right[0],val_leftup[0],val_rightup[0],val_leftdown[0],val_rightdown[0]])
-                val_ys = np.round([val_center[1],val_up[1],val_down[1],val_left[1],val_right[1],val_leftup[1],val_rightup[1],val_leftdown[1],val_rightdown[1]])                     
-            #xs = np.round(np.linspace(x_edge,self.size[0]-x_edge,n_points))
-            #ys = np.round([self.ywidth/3*[1,2][pi%2] for pi in range(n_points)])
-
-            # put the points in format that eyelink wants them, which is
-            # calibration_targets / validation_targets: 'x1,y1 x2,y2 ... xz,yz'
-            calibration_targets = ' '.join(['%d,%d'%(cal_xs[pi],cal_ys[pi]) for pi in range(n_points)])
-            # just copy calibration targets as validation for now:
-            #validation_targets = calibration_targets
-            validation_targets = ' '.join(['%d,%d'%(val_xs[pi],val_ys[pi]) for pi in range(n_points)])
-
-            # point_indices: '0, 1, ... n'
-            point_indices = ', '.join(['%d'%pi for pi in range(n_points)])
-
             # and send these targets to the custom calibration function:
             self.custom_calibration(calibration_targets=calibration_targets,
                 validation_targets=validation_targets,point_indices=point_indices,
-                n_points=n_points,randomize_order=True,repeat_first_target=True,)
+                n_points=self.n_calib_points,randomize_order=True,repeat_first_target=True)
             # reapply settings:
             self.tracker_setup()
         else:
@@ -377,8 +321,13 @@ class EyelinkSession(Session):
                             calibration_type=calibration_type, 
                             sample_rate=sample_rate)
 
-    def custom_calibration(self,calibration_targets,validation_targets,point_indices,n_points,
-        randomize_order=0,repeat_first_target=1):
+    def custom_calibration(self,
+                            calibration_targets,
+                            validation_targets,
+                            point_indices,
+                            n_points,
+                            randomize_order=0,
+                            repeat_first_target=1):
         
         # send the messages:
         self.tracker.send_command('calibration_type = HV%d'%n_points  )
@@ -588,6 +537,75 @@ class EyelinkSession(Session):
         super(EyelinkSession, self).play_sound(sound_index = sound_index)
         if self.tracker != None:
             self.tracker.log('sound ' + str(sound_index) + ' at ' + str(core.getTime()) )
+
+    def _setup_custom_calibration_points(self):
+        # it is setup to do a 9 or 5 point circular calibration, at reduced ecc
+
+        # create 4 x levels:
+        width = self.calib_size * self.size[1]
+        x_start = (self.size[0]-width)/2
+        x_end = self.size[0]-(self.size[0]-width)/2
+        x_range = np.linspace(x_start,x_end,5) + self.x_offset
+        y_start = (self.size[1]-width)/2
+        y_end = self.size[1]-(self.size[1]-width)/2
+        y_range = np.linspace(y_start,y_end,5) 
+
+        # set calibration targets    
+        cal_center = [x_range[2],y_range[2]]
+        cal_left = [x_range[0],y_range[2]]
+        cal_right = [x_range[4],y_range[2]]
+        cal_up = [x_range[2],y_range[0]]
+        cal_down = [x_range[2],y_range[4]]
+        cal_leftup = [x_range[1],y_range[1]]
+        cal_rightup = [x_range[3],y_range[1]]
+        cal_leftdown = [x_range[1],y_range[3]]
+        cal_rightdown = [x_range[3],y_range[3]]            
+        
+        # create 4 x levels:
+        width = self.eyelink_calib_size*0.75 * self.size[1]
+        x_start = (self.size[0]-width)/2
+        x_end = self.size[0]-(self.size[0]-width)/2
+        x_range = np.linspace(x_start,x_end,5) + self.x_offset
+        y_start = (self.size[1]-width)/2
+        y_end = self.size[1]-(self.size[1]-width)/2
+        y_range = np.linspace(y_start,y_end,5) 
+
+        # set calibration targets    
+        val_center = [x_range[2],y_range[2]]
+        val_left = [x_range[0],y_range[2]]
+        val_right = [x_range[4],y_range[2]]
+        val_up = [x_range[2],y_range[0]]
+        val_down = [x_range[2],y_range[4]]
+        val_leftup = [x_range[1],y_range[1]]
+        val_rightup = [x_range[3],y_range[1]]
+        val_leftdown = [x_range[1],y_range[3]]
+        val_rightdown = [x_range[3],y_range[3]]   
+
+        # get them in the right order
+        if self.n_calib_points == 5:
+            cal_xs = np.round([cal_center[0],cal_up[0],cal_down[0],cal_left[0],cal_right[0]])
+            cal_ys = np.round([cal_center[1],cal_up[1],cal_down[1],cal_left[1],cal_right[1]])
+            val_xs = np.round([val_center[0],val_up[0],val_down[0],val_left[0],val_right[0]])
+            val_ys = np.round([val_center[1],val_up[1],val_down[1],val_left[1],val_right[1]])
+        elif self.n_calib_points == 9:
+            cal_xs = np.round([cal_center[0],cal_up[0],cal_down[0],cal_left[0],cal_right[0],cal_leftup[0],cal_rightup[0],cal_leftdown[0],cal_rightdown[0]])
+            cal_ys = np.round([cal_center[1],cal_up[1],cal_down[1],cal_left[1],cal_right[1],cal_leftup[1],cal_rightup[1],cal_leftdown[1],cal_rightdown[1]])         
+            val_xs = np.round([val_center[0],val_up[0],val_down[0],val_left[0],val_right[0],val_leftup[0],val_rightup[0],val_leftdown[0],val_rightdown[0]])
+            val_ys = np.round([val_center[1],val_up[1],val_down[1],val_left[1],val_right[1],val_leftup[1],val_rightup[1],val_leftdown[1],val_rightdown[1]])                     
+        #xs = np.round(np.linspace(x_edge,self.size[0]-x_edge,self.n_calib_points))
+        #ys = np.round([self.ywidth/3*[1,2][pi%2] for pi in range(self.n_calib_points)])
+
+        # put the points in format that eyelink wants them, which is
+        # calibration_targets / validation_targets: 'x1,y1 x2,y2 ... xz,yz'
+        calibration_targets = ' '.join(['%d,%d'%(cal_xs[pi],cal_ys[pi]) for pi in range(self.n_calib_points)])
+        # just copy calibration targets as validation for now:
+        #validation_targets = calibration_targets
+        validation_targets = ' '.join(['%d,%d'%(val_xs[pi],val_ys[pi]) for pi in range(self.n_calib_points)])
+
+        # point_indices: '0, 1, ... n'
+        point_indices = ', '.join(['%d'%pi for pi in range(self.n_calib_points)])
+
+        return 
 
 
 class StarStimSession(EyelinkSession):
