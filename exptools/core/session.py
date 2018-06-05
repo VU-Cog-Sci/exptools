@@ -71,6 +71,7 @@ class Session(object):
                                              allowStencil=True)
                 
             self.screen = pygaze.expdisplay
+            self.screen.waitBlanking = self.wait_blanking
         elif engine == 'psychopy':   
             self.screen = visual.Window(size=self.size, 
                                         fullscr=self.full_screen, 
