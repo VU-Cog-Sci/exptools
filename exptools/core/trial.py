@@ -79,7 +79,7 @@ class Trial(object):
         self.events.append('trial ' + str(self.ID) + ' phase ' + str(self.phase) + ' started at ' + phase_time)
         if self.tracker:
             self.tracker.log('trial ' + str(self.ID) + ' phase ' + str(self.phase) + ' started at ' + phase_time )
-            time_module.sleep(0.0001)
+            time_module.sleep(0.00001)
 
     def event(self):
         for ev in event.getKeys():
