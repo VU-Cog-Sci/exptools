@@ -71,6 +71,7 @@ class Session(object):
                                              allowStencil=True)
                 
             self.screen = pygaze.expdisplay
+            self.screen.waitBlanking = self.wait_blanking
         elif engine == 'psychopy':   
             self.screen = visual.Window(size=self.size, 
                                         fullscr=self.full_screen, 
@@ -251,9 +252,9 @@ class EyelinkSession(Session):
         if tracker_on == 1:
             self.create_tracker(tracker_on=True, 
                                 calibration_type='HV%d'%self.n_calib_points, 
-                                sample_rate=self.sample_rate)
+                                sample_rate=self.sample_rate, *args, **kwargs)
             if self.tracker != None:
-                self.tracker_setup()
+                self.tracker_setup(*args, **kwargs)
         elif tracker_on == 2:
             # self.create_tracker(auto_trigger_calibration = 1, calibration_type = 'HV9')
             # if self.tracker_on:
@@ -263,7 +264,7 @@ class EyelinkSession(Session):
             # create tracker
             self.create_tracker(auto_trigger_calibration=0, 
                                 calibration_type='HV%d'%self.n_calib_points, 
-                                sample_rate=self.sample_rate)
+                                sample_rate=self.sample_rate, *args, **kwargs)
 
             calibration_targets, validation_targets, point_indices = self._setup_custom_calibration_points()
 

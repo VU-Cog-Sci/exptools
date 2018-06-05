@@ -36,6 +36,7 @@ class ExpToolsConfig(object):
 
         # default_file = os.path.join(exptools.__path__[0], 'default_config.cfg')
         exp_config_file = os.path.join(os.path.abspath(os.getcwd()), 'exp_config.cfg')
+        print(exp_config_file)
 
         self._config.read(exp_config_file)
 
