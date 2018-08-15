@@ -25,13 +25,16 @@ import pygaze
 from pygaze import libscreen 
 from pygaze import eyetracker
 
-from .. import config
+from ..utils.config import get_config
 
 
 class Session(object):
     """Session is a main class that creates screen and file properties"""
-    def __init__(self, subject_initials, index_number, **kwargs):
+    def __init__(self, subject_initials, index_number, context=None, **kwargs):
         super(Session, self).__init__()
+
+        self.config = get_config(context=context)
+
         self.subject_initials = subject_initials
         self.index_number = index_number
         
@@ -70,6 +73,12 @@ class Session(object):
                 
             self.screen = pygaze.expdisplay
         elif engine == 'psychopy':   
+
+            if hasattr(self, 'gamma_scale'):
+                gamma = self.gamma_scale
+            else:
+                gamma = None
+
             self.screen = visual.Window(size=self.size, 
                                         fullscr=self.full_screen, 
                                         screen=int(self.screen_nr),
@@ -79,7 +88,8 @@ class Session(object):
                                         rgb=self.background_color, 
                                         waitBlanking=self.wait_blanking, 
                                         useFBO=True,
-                                        winType='pyglet')
+                                        winType='pyglet',
+                                        gamma=gamma)
 
         self.screen.setMouseVisible(self.mouse_visible)
         event.Mouse(visible=self.mouse_visible, win=self.screen)
