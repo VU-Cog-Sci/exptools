@@ -51,9 +51,6 @@ class ExpToolsConfig(object):
     def __init__(self, config_file):
 
         self._config = configparser.ConfigParser()
-
-        current_path = os.path.join(os.path.abspath(os.getcwd()))
-
         self._config.read(config_file)
 
 

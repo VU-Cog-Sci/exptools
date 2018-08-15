@@ -79,7 +79,7 @@ class Trial(object):
         self.events.append('trial ' + str(self.ID) + ' phase ' + str(self.phase) + ' started at ' + phase_time)
         if self.tracker:
             self.tracker.log('trial ' + str(self.ID) + ' phase ' + str(self.phase) + ' started at ' + phase_time )
-            time_module.sleep(0.0001)
+            time_module.sleep(0.00001)
 
     def event(self):
         for ev in event.getKeys():
@@ -99,9 +99,9 @@ class Trial(object):
         elif self.phase > 0:
             previous_time = self.phase_times[self.phase - 1]
         # time elapsed since start of this phase
-        this_phase_time = self.phase_times[self.phase] - previous_time
+        self.this_phase_time = self.phase_times[self.phase] - previous_time
         # check for alarm
-        if this_phase_time > self.phase_durations[self.phase]:
+        if self.this_phase_time > self.phase_durations[self.phase]:
             # last trial stops, others phase forward
             if self.phase == (len(self.phase_durations) - 1):
                 self.stopped = True
