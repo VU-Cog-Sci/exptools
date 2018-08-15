@@ -31,12 +31,23 @@ from ..utils.config import get_config
 
 class Session(object):
     """Session is a main class that creates screen and file properties"""
-    def __init__(self, subject_initials, index_number, context=None, **kwargs):
+    def __init__(self, subject_initials=None, index_number=None, context=None, **kwargs):
         super(Session, self).__init__()
 
         self.config = get_config(context=context)
 
+        if subject_initials is None:
+            subject_initials = raw_input('Subject id [test]?')
+            if subject_initials == '':
+                subject_initials = 'test'
+
         self.subject_initials = subject_initials
+
+        if index_number is None:
+            index_number = raw_input('Run [1]?')
+            if index_number == '':
+                index_number = 1
+
         self.index_number = index_number
         
         self.clock = core.Clock()
