@@ -70,7 +70,7 @@ class Session(object):
         for argument in ['size', 'full_screen', 'background_color', 'gamma_scale',
                          'physical_screen_size', 'physical_screen_distance',
                          'max_lums', 'wait_blanking', 'screen_nr', 'mouse_visible']:
-            value = kwargs.pop(argument, config.get('screen', argument))
+            value = kwargs.pop(argument, self.config.get('screen', argument))
             setattr(self, argument, value)
 
         if engine == 'pygaze':
@@ -232,7 +232,7 @@ class MRISession(Session):
         self.simulate_mri_trigger = simulate_mri_trigger
 
         if mri_trigger_key is None:
-            self.mri_trigger_key = config.get('mri', 'mri_trigger_key')    
+            self.mri_trigger_key = self.config.get('mri', 'mri_trigger_key')    
         else:
             self.mri_trigger_key = mri_trigger_key
 
@@ -256,7 +256,7 @@ class EyelinkSession(Session):
         super(EyelinkSession, self).__init__(subject_initials, index_number, *args, **kwargs)
 
         for argument in ['n_calib_points', 'sample_rate', 'calib_size', 'x_offset']:
-            value = kwargs.pop(argument, config.get('eyetracker', argument))
+            value = kwargs.pop(argument, self.config.get('eyetracker', argument))
             setattr(self, argument, value)
 
         # set pygaze settings
