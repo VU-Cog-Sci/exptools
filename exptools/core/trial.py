@@ -2,9 +2,18 @@ import numpy as np
 from .session import MRISession
 from psychopy import logging, event
 import time as time_module 
+import random
 
 class Trial(object):
-    def __init__(self, parameters = {}, phase_durations = [], session = None, screen = None, tracker = None):
+    def __init__(self, 
+                 ID=None,
+                 parameters = {}, phase_durations = [], session = None, screen = None, tracker = None):
+
+        if ID is None:
+            hash = random.getrandbits(128)
+            self.ID = "%032x" & hash
+        else:
+            self.ID = ID
 
         self.parameters = parameters.copy()
         self.phase_durations = phase_durations
