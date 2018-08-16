@@ -214,6 +214,10 @@ class Session(object):
     def deg2pix(self, deg):
 
         return deg * self.pixels_per_degree
+
+    def pix2deg(self, pix):
+
+        return pix / self.pixels_per_degree
             
 class MRISession(Session):
 
