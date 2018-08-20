@@ -222,8 +222,8 @@ class Session(object):
 class MRISession(Session):
 
     def __init__(self, 
-                 subject_initials,
-                 index_number,
+                 subject_initials=None,
+                 index_number=None,
                  tr=2, 
                  simulate_mri_trigger=True, 
                  mri_trigger_key=None, 

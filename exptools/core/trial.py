@@ -11,7 +11,7 @@ class Trial(object):
 
         if ID is None:
             hash = random.getrandbits(128)
-            self.ID = "%032x" & hash
+            self.ID = "%032x" % hash
         else:
             self.ID = ID
 
