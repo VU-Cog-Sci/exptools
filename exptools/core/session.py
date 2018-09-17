@@ -63,12 +63,13 @@ class Session(object):
         self.create_screen(engine=engine, **kwargs)
 
         self.start_time = self.clock.getTime()
+        self.frame_nr = 0
     
     def create_screen(self, engine='pygaze', **kwargs):
 
          #Set arguments from config file or kwargs
         for argument in ['size', 'full_screen', 'background_color', 'gamma_scale',
-                         'physical_screen_size', 'physical_screen_distance',
+                         'physical_screen_size', 'physical_screen_distance', 'framerate',
                          'max_lums', 'wait_blanking', 'screen_nr', 'mouse_visible']:
             value = kwargs.pop(argument, self.config.get('screen', argument))
             setattr(self, argument, value)

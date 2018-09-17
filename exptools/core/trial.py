@@ -34,7 +34,8 @@ class Trial(object):
     def create_stimuli(self):
         pass
 
-    def run(self):
+    def run(self, ID = 0):
+        self.ID = ID
         self.start_time = self.session.clock.getTime()
         if self.tracker:
             self.tracker.log('trial ' + str(self.ID) + ' started at ' + str(self.start_time) )
@@ -79,6 +80,7 @@ class Trial(object):
 
     def draw(self):
         """draw function of the Trial superclass finishes drawing by clearing, drawing the viewport and swapping buffers"""
+        self.session.frame_nr += 1
         self.screen.flip()
 
     def phase_forward(self):
