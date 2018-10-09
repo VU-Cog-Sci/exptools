@@ -34,8 +34,7 @@ class Trial(object):
     def create_stimuli(self):
         pass
 
-    def run(self, ID = 0):
-        self.ID = ID
+    def run(self):
         self.start_time = self.session.clock.getTime()
         if self.tracker:
             self.tracker.log('trial ' + str(self.ID) + ' started at ' + str(self.start_time) )
