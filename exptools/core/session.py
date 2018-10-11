@@ -68,18 +68,22 @@ class Session(object):
     def create_screen(self, engine='pygaze', **kwargs):
 
          #Set arguments from config file or kwargs
-        for argument in ['size', 'full_screen', 'background_color', 'gamma_scale',
+        for argument in ['size', 'full_screen', 'background_color', 'foreground_color', 'gamma_scale',
                          'physical_screen_size', 'physical_screen_distance', 'framerate',
                          'max_lums', 'wait_blanking', 'screen_nr', 'mouse_visible']:
             value = kwargs.pop(argument, self.config.get('screen', argument))
             setattr(self, argument, value)
 
         if engine == 'pygaze':
+
+            fgc = list((int(255*(fgl+1)/2.0) for fgl in self.foreground_color))
+            bgc = list((int(255*(bgl+1)/2.0) for bgl in self.background_color))
+
             setattr(pygaze.settings, 'FULLSCREEN', self.full_screen)
             self.display = libscreen.Display(disptype='psychopy', 
                                              dispsize=self.size, 
-                                             fgc=(255,0,0), 
-                                             bgc=list((255*bgl for bgl in self.background_color)), 
+                                             fgc=fgc, 
+                                             bgc=bgc, 
                                              screennr=int(self.screen_nr),
                                              mousevisible=self.mouse_visible,
                                              fullscr=self.full_screen, 
@@ -110,7 +114,6 @@ class Session(object):
         event.Mouse(visible=self.mouse_visible, win=self.screen)
 
         self.screen.setColor(self.background_color)
-        
         self.screen.background_color = self.background_color
         self.screen_pix_size = self.size
 
