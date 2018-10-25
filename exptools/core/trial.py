@@ -6,14 +6,7 @@ import random
 
 class Trial(object):
     def __init__(self, 
-                 ID=None,
                  parameters = {}, phase_durations = [], session = None, screen = None, tracker = None):
-
-        if ID is None:
-            hash = random.getrandbits(128)
-            self.ID = "%032x" % hash
-        else:
-            self.ID = ID
 
         self.parameters = parameters.copy()
         self.phase_durations = phase_durations
@@ -34,8 +27,14 @@ class Trial(object):
     def create_stimuli(self):
         pass
 
-    def run(self, ID = 0):
-        self.ID = ID
+    def run(self, ID=None):
+
+        if ID is None:
+            hash = random.getrandbits(128)
+            self.ID = "%032x" % hash
+        else:
+            self.ID = ID
+
         self.start_time = self.session.clock.getTime()
         if self.tracker:
             self.tracker.log('trial ' + str(self.ID) + ' started at ' + str(self.start_time) )
